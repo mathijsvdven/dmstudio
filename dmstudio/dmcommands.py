@@ -6,7 +6,7 @@ OSCRIPTCON = None
 
 class init(object):
 
-    def __init__(self, version=None):
+    def __init__(self, version=None, verbose = False):
 
         """
         commands.__init__
@@ -20,12 +20,14 @@ class init(object):
         -----------
 
         version: str
-            optional datamine studio versions ('Studio3', 'StudioRM', 'StudioEM') If no version given, the initializtion
-            will try different versions starting with StudioRM then Studio3 and finally StudioEM.
+            optional datamine studio versions ('Studio3', 'StudioRM', 'StudioEM', 'StudioRMPro') If no version given, 
+            the initializtion will try different versions starting with StudioRM then Studio3, StudioEM, and StudioRMPro.
 
         """
         self.oScript = OSCRIPTCON
         self.version = version
+        self.verbose = verbose
+
         if self.oScript is None:
             self.oScript = dmstudio.initialize.studio(self.version)
 
@@ -43,8 +45,12 @@ class init(object):
         command: str
             Datamine command string to be parsed
         """
+        
+        if self.verbose == True:
+            print("Running command: {}".format(command)) # print full ocmmand to edit if necessary for missing parameters
 
         self.oScript.ParseCommand(command)
+
 
         # update the dmdir.py file containing list of .dm files in current directory
 
@@ -10053,12 +10059,12 @@ class init(object):
 
         if expression != "optional":
             if type(expression) == list:
-                exp_list = ''
-                for i in range(len(expression)):
-                    exp_list += "'" + expression[i] + "' "
-                command += " " + exp_list + " 'GO'"
+                # exp_list = ' '.join(expression)
+                # for i in range(len(expression)):
+                    # exp_list += "'" + expression[i] + "' "
+                command += " '{}' GO".format(' '.join(expression))
             else:
-                command += " " + expression + " 'GO'"
+                command += " '{}' GO".format(expression)
 
         # return command
         self.run_command(command)
@@ -40425,6 +40431,263 @@ class init(object):
 
         if retrieval != "optional":
             command += "{" + retrieval + "}"
+
+        self.run_command(command)
+
+    def swathplt2(self,
+             model_i,
+             swath1_o,
+             swath2_o,
+             grade1_f,
+             directn_p,
+             sample_i='optional',
+             swathstr_o='optional',
+             zonefld_f='optional',
+             samplex_f='optional',
+             sampley_f='optional',
+             samplez_f='optional',
+             grade2_f='optional',
+             sgrade1_f='optional',
+             density_f='optional',
+             dcweight_f='optional',
+             width_p='optional',
+             zoneval_p='optional',
+             allzones_p='optional',
+             allznval_p='optional',
+             density_p='optional',
+             csvout1_p='optional',
+             csvout2_p='optional',
+             excel_p='optional'
+             ):
+
+        """
+        This is auto-generated documentation. For more command information visit the Datamine help file.
+        Author: Mathijs van de Ven
+        Date: 02/02/2023
+
+        -----
+        INPUT
+        -----
+
+        MODEL:
+        description: Input block model file
+        default: nan
+        range: nan
+
+        SAMPLE:
+        description: Optional Input sample data file. This must be a set of
+        samples with X, Y and Z locations, it may a desurveyed drillhole file.
+        default: nan
+        range: nan
+
+        ------
+        OUTPUT
+        ------
+
+        SWATH1:
+        description: Output swath plot data file. This file contains the Swath
+        Plot data in a structure that is suitable for creating a plot using
+        Studio's scatter/line plot function in the Plots views.
+        default: nan
+        range: nan
+
+        SWATH2:
+        description: Alternative output swath plot data file. This file contains
+        the Swath Plot data in a structure that is suitable for graphing in Excel.
+        This is the output that will be used to generate a chart if @EXCEL=1
+        default: nan
+        range: nan
+
+        SWATHSTR:
+        description: Optional output string file showing the location of the Swath
+        slices and the relative grade values.
+        default: nan
+        range: nan
+
+        ------
+        FIELDS
+        ------
+
+        GRADE1:
+        description: First or only model grade field for graphing.
+        default: nan
+        range: nan
+
+        ZONEFLD:
+        description: Numeric field used to congregate the input model and sample
+        data by zone. This can either be used in conjunction with the @ZONEVAL
+        parameter to output data for a single zone, or can be used without
+        @ZONEVAL to produce a multiple-zone and summary report (if @EXCEL=1). This
+        field is optional. If it does not exist in the input sample or model file
+        it is ignored. An example of using this is to create plot data for just a
+        single rock type.
+        default: nan
+        range: nan
+
+        SAMPLEX:
+        description: X coordinate field in sample input file
+        default: nan
+        range: nan
+
+        SAMPLEY:
+        description: Y coordinate field in sample input file
+        default: nan
+        range: nan
+
+        SAMPLEZ:
+        description: Z coordinate field in sample input file
+        default: nan
+        range: nan
+
+        GRADE2-10:
+        description: Optional model grade fields for graphing.
+        default: nan
+        range: nan
+
+        SGRADE1 - 10:
+        description: Optional sample grade fields for graphing.
+        default: nan
+        range: nan
+
+        DENSITY:
+        description: Density field to enable calculation of tonnage weighted grade
+        statistics for the model. If not selected a global density will be defined
+        by the @DENSITY parameter.
+        default: nan
+        range: nan
+
+        DCWEIGHT:
+        description: Declustered sample weight field.
+        default: nan
+        range: nan
+
+        ----------
+        PARAMETERS
+        ----------
+
+        DIRECTN:
+        description: Direction in which swath plot should be calculated - X, Y or
+        Z.  =1: X Direction.  =2: Y Direction.  =3: Z Direction.
+        default: 1
+        range: 1,3
+
+        WIDTH:
+        description: Slice thickness for Swath plot.
+        default: 50
+        range: nan
+
+        ZONEVAL:
+        description: Value in the ZONFLD field used to filter the input sample and
+        model value. If specified, only data for the nominated zone value will be
+        exported.
+        default: Undefined
+        range: Undefined
+
+        ALLZONES:
+        description: Parameter to show whether the average results over all
+        ZONEVALs should be calculated as well as results for individual ZONEVALs:
+        =0: Only calculate results for individual ZONEVALs; do not calculate
+        average results over all ZONEVALs. =1: Calculate results for individual
+        ZONEVALs and average results over all ZONEVALs.
+        default: 9999999
+        range: Undefined
+
+        ALLZNVAL:
+        description: The ZONEFLD value to be assigned to the results for the
+        average over all ZONEFLDs
+        default: 1
+        range: Undefined
+
+        DENSITY:
+        description: Default model density. Used if *DENSITY field has not been
+        selected. Also used to replace absent density values in the model if a
+        *DENSITY field has been selected
+        default: 1
+        range: Undefined
+
+        CSVOUT1:
+        description: Set to 1 to create a CSV output file of the plot data file
+        specified in SWATH1.
+        default: 0
+        range: 0,1
+
+        CSVOUT2:
+        description: Set to 1 to create a CSV output file of the alternative plot
+        data file specified in SWATH2.  Note that this setting is not required if
+        @EXCEL=1 (as a CSV file will be generated regardless of this setting
+        default: 0
+        range: 0,1
+
+        EXCEL:
+        description: Set to 1 to automatically load data into Excel and display
+        the calculated swath plot.  If 0 and CSVOUT2=1, a csv file will be
+        generated, but not loaded into Excel.
+        default: 0
+        range: 0,1
+
+        """
+
+        # Required Arguments
+        command = 'swathplt' + ' &MODEL=' + str(model_i)
+        command += ' &SWATH1=' + str(swath1_o)
+        command += ' &SWATH2=' + str(swath2_o)
+        command += ' *GRADE1=' + str(grade1_f)
+        command += ' @DIRECTN=' + str(directn_p)
+
+        # Optional Arguments
+        if sample_i != 'optional':
+            command += ' &SAMPLE=' + str(sample_i)
+
+        if swathstr_o != 'optional':
+            command += ' &SWATHSTR=' + str(swathstr_o)
+
+        if zonefld_f != 'optional':
+            command += ' *ZONEFLD=' + str(zonefld_f)
+
+        if samplex_f != 'optional':
+            command += ' *SAMPLEX=' + str(samplex_f)
+
+        if sampley_f != 'optional':
+            command += ' *SAMPLEY=' + str(sampley_f)
+
+        if samplez_f != 'optional':
+            command += ' *SAMPLEZ=' + str(samplez_f)
+
+        if grade2_f != 'optional':
+            command += ' *GRADE2=' + str(grade2_f)
+
+        if sgrade1_f != 'optional':
+            command += ' *SGRADE1=' + str(sgrade1_f)
+
+        if density_f != 'optional':
+            command += ' *DENSITY=' + str(density_f)
+
+        if dcweight_f != 'optional':
+            command += ' *DCWEIGHT=' + str(dcweight_f)
+
+        if width_p != 'optional':
+            command += ' @WIDTH=' + str(width_p)
+
+        if zoneval_p != 'optional':
+            command += ' @ZONEVAL=' + str(zoneval_p)
+
+        if allzones_p != 'optional':
+            command += ' @ALLZONES=' + str(allzones_p)
+
+        if allznval_p != 'optional':
+            command += ' @ALLZNVAL=' + str(allznval_p)
+
+        if density_p != 'optional':
+            command += ' @DENSITY=' + str(density_p)
+
+        if csvout1_p != 'optional':
+            command += ' @CSVOUT1=' + str(csvout1_p)
+
+        if csvout2_p != 'optional':
+            command += ' @CSVOUT2=' + str(csvout2_p)
+
+        if excel_p != 'optional':
+            command += ' @EXCEL=' + str(excel_p)
 
         self.run_command(command)
 

@@ -20,7 +20,7 @@ OSCRIPTCON = None
 
 class init(object):
 
-    def __init__(self, version=None):
+    def __init__(self, version=None, verbose = False):
 
         '''
         commands.__init__
@@ -40,6 +40,8 @@ class init(object):
         '''
         self.oScript = OSCRIPTCON
         self.version = version
+        self.verbose = verbose
+
         if self.oScript is None:
             self.oScript = dmstudio.initialize.studio(self.version)
 
@@ -56,6 +58,9 @@ class init(object):
         command: str
             datamine command string to be parsed
         '''
+
+        if self.verbose == True:
+            print("Running command: {}".format(command)) # print full ocmmand to edit if necessary for missing parameters
 
         try:
             self.oScript.Parsecommand(command)
