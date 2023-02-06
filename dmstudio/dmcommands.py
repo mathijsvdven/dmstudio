@@ -1,9 +1,11 @@
 import dmstudio.initialize
-import utils
+import dmstudio.utils as utils
+from dmstudio.errors import COM_Error
 import inspect
 import logging
 
-logging.basicConfig(filename=dmstudio.initialize.cwd/"dmstudio_log.txt", level=logging.DEBUG, 
+logfile = dmstudio.initialize.cwd/"dmstudio_log.txt"
+logging.basicConfig(filename=logfile, level=logging.DEBUG, 
                     format='[%(asctime)s] %(name)s %(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
 
@@ -12,7 +14,7 @@ OSCRIPTCON = None
 
 class init(object):
 
-    def __init__(self, version=None, verbose = False):
+    def __init__(self, version=None, dry_run = False):
 
         """
         commands.__init__
@@ -32,7 +34,7 @@ class init(object):
         """
         self.oScript = OSCRIPTCON
         self.version = version
-        self.verbose = verbose
+        self.dry_run = dry_run
 
         if self.oScript is None:
             self.oScript = dmstudio.initialize.studio(self.version)
@@ -51,13 +53,16 @@ class init(object):
         command: str
             Datamine command string to be parsed
         """
-        
-        if self.verbose == True:
-            print("Running command: {}".format(command)) # print full ocmmand to edit if necessary for missing parameters
 
-        self.oScript.ParseCommand(command)
-        logger.info("Running command: {}".format(command))
-
+        if self.dry_run == True:
+            print(command)
+        else:
+            logger.info("Running command: {}".format(command))
+            try:
+                self.oScript.ParseCommand(command)
+            except Exception as e:
+                logger.error("An issue occurred parsing this command to Studio, please inspect the parsed arguments and validate against the help files, error message: \n{}".format(e))
+                raise COM_Error("An issue occurred parsing this command to Studio, please inspect the log at {}\dmstudio_log.txt and validate the command".format(logfile))
 
         # update the dmdir.py file containing list of .dm files in current directory
 
@@ -101,6 +106,42 @@ class init(object):
 
         return field_string;
 
+
+    def xrun(self, macro_i="required", macro_name_p="required"):
+
+        """
+        XRUN
+        ----
+        This is auto-generated documentation. For more command information visit the Datamine help file.
+
+        Input Files:
+        ------------
+
+
+        Output Files:
+        -------------
+
+
+        Fields:
+        -------
+
+
+        Parameters:
+        -----------
+
+        """
+
+        if macro_i == "required":
+            raise ValueError("macro_i is required.")
+
+        if macro_name_p == "required":
+            raise ValueError("macro_name is required.")
+
+        command = "xrun " + macro_i + " " + str(macro_name_p)
+
+        self.run_command(command)
+
+
     def accmlt(self,
                in_i,
                out_o,
@@ -117,7 +158,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -165,7 +206,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(accmlt).parameters.items()
+        fsignature = inspect.signature(self.accmlt).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -174,10 +215,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'ACCMLT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def adddd(self,
@@ -193,7 +232,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -215,7 +254,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(adddd).parameters.items()
+        fsignature = inspect.signature(self.adddd).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -224,10 +263,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'ADDDD ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def addmod(self,
@@ -245,7 +282,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -278,7 +315,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(addmod).parameters.items()
+        fsignature = inspect.signature(self.addmod).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -287,10 +324,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'ADDMOD ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def addtri(self,
@@ -310,7 +345,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -343,7 +378,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(addtri).parameters.items()
+        fsignature = inspect.signature(self.addtri).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -352,10 +387,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'ADDTRI ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def aed(self,
@@ -373,7 +406,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -413,7 +446,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(aed).parameters.items()
+        fsignature = inspect.signature(self.aed).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -422,10 +455,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'AED ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def alfnum(self,
@@ -448,7 +479,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -494,7 +525,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(alfnum).parameters.items()
+        fsignature = inspect.signature(self.alfnum).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -503,10 +534,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'ALFNUM ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def anisoang(self,
@@ -541,7 +570,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -671,7 +700,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(anisoang).parameters.items()
+        fsignature = inspect.signature(self.anisoang).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -680,10 +709,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'ANISOANG ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def anova1(self,
@@ -700,7 +727,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -724,7 +751,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(anova1).parameters.items()
+        fsignature = inspect.signature(self.anova1).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -733,10 +760,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'ANOVA1 ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def append(self,
@@ -756,7 +781,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -813,7 +838,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(append).parameters.items()
+        fsignature = inspect.signature(self.append).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -822,10 +847,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'APPEND ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def aptotrue(self,
@@ -845,7 +868,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -889,7 +912,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(aptotrue).parameters.items()
+        fsignature = inspect.signature(self.aptotrue).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -898,10 +921,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'APTOTRUE ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def astran(self,
@@ -922,7 +943,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -987,7 +1008,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(astran).parameters.items()
+        fsignature = inspect.signature(self.astran).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -996,10 +1017,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'ASTRAN ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def attchk(self,
@@ -1016,7 +1035,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -1046,7 +1065,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(attchk).parameters.items()
+        fsignature = inspect.signature(self.attchk).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -1055,10 +1074,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'ATTCHK ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def attset(self,
@@ -1087,7 +1104,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -1169,7 +1186,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(attset).parameters.items()
+        fsignature = inspect.signature(self.attset).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -1178,10 +1195,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'ATTSET ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def autocr(self,
@@ -1201,7 +1216,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -1247,7 +1262,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(autocr).parameters.items()
+        fsignature = inspect.signature(self.autocr).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -1256,10 +1271,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'AUTOCR ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def autovmod(self,
@@ -1289,7 +1302,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -1378,7 +1391,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(autovmod).parameters.items()
+        fsignature = inspect.signature(self.autovmod).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -1387,10 +1400,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'AUTOVMOD ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def backtr(self,
@@ -1419,7 +1430,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -1504,7 +1515,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(backtr).parameters.items()
+        fsignature = inspect.signature(self.backtr).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -1513,10 +1524,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'BACKTR ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def bhcount(self,
@@ -1534,7 +1543,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -1570,7 +1579,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(bhcount).parameters.items()
+        fsignature = inspect.signature(self.bhcount).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -1579,10 +1588,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'BHCOUNT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def blkper(self,
@@ -1605,7 +1612,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -1661,7 +1668,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(blkper).parameters.items()
+        fsignature = inspect.signature(self.blkper).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -1670,10 +1677,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'BLKPER ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def blktri(self,
@@ -1699,7 +1704,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -1775,7 +1780,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(blktri).parameters.items()
+        fsignature = inspect.signature(self.blktri).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -1784,10 +1789,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'BLKTRI ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def canon(self,
@@ -1807,7 +1810,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -1848,7 +1851,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(canon).parameters.items()
+        fsignature = inspect.signature(self.canon).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -1857,10 +1860,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'CANON ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def cdtran(self,
@@ -1898,7 +1899,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -2017,7 +2018,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(cdtran).parameters.items()
+        fsignature = inspect.signature(self.cdtran).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -2026,10 +2027,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'CDTRAN ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def cellconf(self,
@@ -2051,7 +2050,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -2106,7 +2105,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(cellconf).parameters.items()
+        fsignature = inspect.signature(self.cellconf).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -2115,10 +2114,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'CELLCONF ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def channl3d(self,
@@ -2146,7 +2143,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -2231,7 +2228,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(channl3d).parameters.items()
+        fsignature = inspect.signature(self.channl3d).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -2240,10 +2237,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'CHANNL3D ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def chart(self,
@@ -2311,7 +2306,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -2587,7 +2582,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(chart).parameters.items()
+        fsignature = inspect.signature(self.chart).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -2596,10 +2591,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'CHART ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def checkit(self,
@@ -2615,7 +2608,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -2636,7 +2629,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(checkit).parameters.items()
+        fsignature = inspect.signature(self.checkit).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -2645,10 +2638,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'CHECKIT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def chktri(self,
@@ -2667,7 +2658,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -2701,7 +2692,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(chktri).parameters.items()
+        fsignature = inspect.signature(self.chktri).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -2710,10 +2701,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'CHKTRI ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def closepts(self,
@@ -2736,7 +2725,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -2797,7 +2786,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(closepts).parameters.items()
+        fsignature = inspect.signature(self.closepts).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -2806,10 +2795,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'CLOSEPTS ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def clustr(self,
@@ -2830,7 +2817,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -2878,7 +2865,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(clustr).parameters.items()
+        fsignature = inspect.signature(self.clustr).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -2887,10 +2874,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'CLUSTR ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def cogtri(self,
@@ -2912,7 +2897,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -2965,7 +2950,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(cogtri).parameters.items()
+        fsignature = inspect.signature(self.cogtri).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -2974,10 +2959,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'COGTRI ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def cokrig(self,
@@ -3013,7 +2996,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -3139,7 +3122,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(cokrig).parameters.items()
+        fsignature = inspect.signature(self.cokrig).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -3148,10 +3131,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'COKRIG ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def combmod(self,
@@ -3171,7 +3152,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -3215,7 +3196,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(combmod).parameters.items()
+        fsignature = inspect.signature(self.combmod).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -3224,10 +3205,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'COMBMOD ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def compbe(self,
@@ -3258,7 +3237,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -3344,7 +3323,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(compbe).parameters.items()
+        fsignature = inspect.signature(self.compbe).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -3353,10 +3332,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'COMPBE ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def compbr(self,
@@ -3389,7 +3366,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -3482,7 +3459,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(compbr).parameters.items()
+        fsignature = inspect.signature(self.compbr).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -3491,10 +3468,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'COMPBR ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def compdh(self,
@@ -3525,7 +3500,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -3617,7 +3592,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(compdh).parameters.items()
+        fsignature = inspect.signature(self.compdh).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -3626,10 +3601,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'COMPDH ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def compse(self,
@@ -3656,7 +3629,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -3754,7 +3727,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(compse).parameters.items()
+        fsignature = inspect.signature(self.compse).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -3763,10 +3736,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'COMPSE ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def comres(self,
@@ -3782,7 +3753,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         ------
         OUTPUT
@@ -3820,7 +3791,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(comres).parameters.items()
+        fsignature = inspect.signature(self.comres).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -3829,10 +3800,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'COMRES ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def conpol(self,
@@ -3853,7 +3822,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -3904,7 +3873,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(conpol).parameters.items()
+        fsignature = inspect.signature(self.conpol).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -3913,10 +3882,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'CONPOL ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def contou(self,
@@ -3954,7 +3921,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -4060,7 +4027,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(contou).parameters.items()
+        fsignature = inspect.signature(self.contou).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -4069,10 +4036,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'CONTOU ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def contst(self,
@@ -4104,7 +4069,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -4196,7 +4161,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(contst).parameters.items()
+        fsignature = inspect.signature(self.contst).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -4205,10 +4170,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'CONTST ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def copy(self,
@@ -4224,7 +4187,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -4245,7 +4208,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(copy).parameters.items()
+        fsignature = inspect.signature(self.copy).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -4254,10 +4217,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'COPY ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def copynr(self,
@@ -4275,7 +4236,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -4307,7 +4268,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(copynr).parameters.items()
+        fsignature = inspect.signature(self.copynr).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -4316,10 +4277,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'COPYNR ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def correl(self,
@@ -4337,7 +4296,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -4364,7 +4323,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(correl).parameters.items()
+        fsignature = inspect.signature(self.correl).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -4373,10 +4332,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'CORREL ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def count(self,
@@ -4393,7 +4350,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -4422,7 +4379,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(count).parameters.items()
+        fsignature = inspect.signature(self.count).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -4431,10 +4388,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'COUNT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def cozone(self,
@@ -4458,7 +4413,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -4524,7 +4479,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(cozone).parameters.items()
+        fsignature = inspect.signature(self.cozone).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -4533,10 +4488,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'COZONE ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def crscor(self,
@@ -4556,7 +4509,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -4602,7 +4555,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(crscor).parameters.items()
+        fsignature = inspect.signature(self.crscor).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -4611,10 +4564,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'CRSCOR ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def csmodel(self,
@@ -4648,7 +4599,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -4829,7 +4780,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(csmodel).parameters.items()
+        fsignature = inspect.signature(self.csmodel).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -4838,10 +4789,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'CSMODEL ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def csowopt(self,
@@ -4859,7 +4808,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -4897,7 +4846,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(csowopt).parameters.items()
+        fsignature = inspect.signature(self.csowopt).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -4906,10 +4855,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'CSOWOPT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def ddcopy(self,
@@ -4925,7 +4872,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -4946,7 +4893,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(ddcopy).parameters.items()
+        fsignature = inspect.signature(self.ddcopy).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -4955,10 +4902,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'DDCOPY ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def ddlist(self,
@@ -4973,7 +4918,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -4987,7 +4932,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(ddlist).parameters.items()
+        fsignature = inspect.signature(self.ddlist).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -4996,10 +4941,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'DDLIST ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def decile(self,
@@ -5023,7 +4966,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -5082,7 +5025,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(decile).parameters.items()
+        fsignature = inspect.signature(self.decile).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -5091,10 +5034,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'DECILE ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def declust(self,
@@ -5125,7 +5066,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -5214,7 +5155,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(declust).parameters.items()
+        fsignature = inspect.signature(self.declust).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -5223,10 +5164,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'DECLUST ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def decode(self,
@@ -5245,7 +5184,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -5284,7 +5223,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(decode).parameters.items()
+        fsignature = inspect.signature(self.decode).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -5293,10 +5232,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'DECODE ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def delete(self,
@@ -5312,7 +5249,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -5339,7 +5276,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(delete).parameters.items()
+        fsignature = inspect.signature(self.delete).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -5348,10 +5285,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'DELETE ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def desurv(self,
@@ -5381,7 +5316,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -5465,7 +5400,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(desurv).parameters.items()
+        fsignature = inspect.signature(self.desurv).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -5474,10 +5409,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'DESURV ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def diffrn(self,
@@ -5496,7 +5429,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -5540,7 +5473,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(diffrn).parameters.items()
+        fsignature = inspect.signature(self.diffrn).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -5549,10 +5482,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'DIFFRN ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def dilute(self,
@@ -5575,7 +5506,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -5626,7 +5557,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(dilute).parameters.items()
+        fsignature = inspect.signature(self.dilute).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -5635,10 +5566,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'DILUTE ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def dilutmod(self,
@@ -5664,7 +5593,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -5727,7 +5656,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(dilutmod).parameters.items()
+        fsignature = inspect.signature(self.dilutmod).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -5736,10 +5665,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'DILUTMOD ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def discan(self,
@@ -5763,7 +5690,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -5822,7 +5749,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(discan).parameters.items()
+        fsignature = inspect.signature(self.discan).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -5831,10 +5758,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'DISCAN ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def discla(self,
@@ -5855,7 +5780,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -5898,7 +5823,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(discla).parameters.items()
+        fsignature = inspect.signature(self.discla).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -5907,10 +5832,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'DISCLA ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def displa(self,
@@ -5931,7 +5854,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -5976,7 +5899,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(displa).parameters.items()
+        fsignature = inspect.signature(self.displa).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -5985,10 +5908,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'DISPLA ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def dmedit(self,
@@ -6004,7 +5925,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -6026,7 +5947,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(dmedit).parameters.items()
+        fsignature = inspect.signature(self.dmedit).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -6035,10 +5956,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'DMEDIT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def dmfd(self,
@@ -6053,7 +5972,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -6067,7 +5986,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(dmfd).parameters.items()
+        fsignature = inspect.signature(self.dmfd).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -6076,10 +5995,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'DMFD ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def drilgrid(self,
@@ -6125,7 +6042,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -6334,7 +6251,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(drilgrid).parameters.items()
+        fsignature = inspect.signature(self.drilgrid).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -6343,10 +6260,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'DRILGRID ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def dtmcut(self,
@@ -6376,7 +6291,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -6448,7 +6363,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(dtmcut).parameters.items()
+        fsignature = inspect.signature(self.dtmcut).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -6457,10 +6372,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'DTMCUT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def dtmmod(self,
@@ -6488,7 +6401,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -6554,7 +6467,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(dtmmod).parameters.items()
+        fsignature = inspect.signature(self.dtmmod).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -6563,10 +6476,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'DTMMOD ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def dxfout(self,
@@ -6587,7 +6498,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -6636,7 +6547,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(dxfout).parameters.items()
+        fsignature = inspect.signature(self.dxfout).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -6645,10 +6556,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'DXFOUT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def ellipse(self,
@@ -6679,7 +6588,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -6767,7 +6676,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(ellipse).parameters.items()
+        fsignature = inspect.signature(self.ellipse).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -6776,10 +6685,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'ELLIPSE ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def englog(self,
@@ -6809,7 +6716,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -6894,7 +6801,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(englog).parameters.items()
+        fsignature = inspect.signature(self.englog).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -6903,10 +6810,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'ENGLOG ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def envseq(self,
@@ -6938,7 +6843,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -7068,7 +6973,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(envseq).parameters.items()
+        fsignature = inspect.signature(self.envseq).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -7077,10 +6982,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'ENVSEQ ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def estima(self,
@@ -7149,7 +7052,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -7525,7 +7428,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(estima).parameters.items()
+        fsignature = inspect.signature(self.estima).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -7534,10 +7437,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'ESTIMA ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def expfld(self,
@@ -7557,7 +7458,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -7601,7 +7502,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(expfld).parameters.items()
+        fsignature = inspect.signature(self.expfld).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -7610,10 +7511,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'EXPFLD ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def expmmw(self,
@@ -7633,7 +7532,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -7696,7 +7595,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(expmmw).parameters.items()
+        fsignature = inspect.signature(self.expmmw).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -7705,10 +7604,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'EXPMMW ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def expndmod(self,
@@ -7743,7 +7640,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -7862,7 +7759,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(expndmod).parameters.items()
+        fsignature = inspect.signature(self.expndmod).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -7871,10 +7768,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'EXPNDMOD ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def extend(self,
@@ -7889,7 +7784,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -7903,7 +7798,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(extend).parameters.items()
+        fsignature = inspect.signature(self.extend).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -7912,10 +7807,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'EXTEND ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def extndf(self,
@@ -7930,7 +7823,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -7944,7 +7837,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(extndf).parameters.items()
+        fsignature = inspect.signature(self.extndf).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -7953,10 +7846,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'EXTNDF ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def extra(self,
@@ -7974,7 +7865,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -8005,7 +7896,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(extra).parameters.items()
+        fsignature = inspect.signature(self.extra).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -8014,10 +7905,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'EXTRA ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def factor(self,
@@ -8042,7 +7931,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -8102,7 +7991,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(factor).parameters.items()
+        fsignature = inspect.signature(self.factor).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -8111,10 +8000,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'FACTOR ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def fdin(self,
@@ -8129,7 +8016,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         ------
         OUTPUT
@@ -8143,7 +8030,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(fdin).parameters.items()
+        fsignature = inspect.signature(self.fdin).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -8152,10 +8039,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'FDIN ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def fdout(self,
@@ -8172,7 +8057,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -8197,7 +8082,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(fdout).parameters.items()
+        fsignature = inspect.signature(self.fdout).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -8206,10 +8091,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'FDOUT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def ffunc(self,
@@ -8230,7 +8113,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -8273,7 +8156,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(ffunc).parameters.items()
+        fsignature = inspect.signature(self.ffunc).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -8282,10 +8165,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'FFUNC ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def filcom(self,
@@ -8301,7 +8182,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -8322,7 +8203,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(filcom).parameters.items()
+        fsignature = inspect.signature(self.filcom).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -8331,10 +8212,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'FILCOM ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def filexp(self,
@@ -8350,7 +8229,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -8371,7 +8250,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(filexp).parameters.items()
+        fsignature = inspect.signature(self.filexp).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -8380,10 +8259,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'FILEXP ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def filtpo(self,
@@ -8404,7 +8281,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -8450,7 +8327,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(filtpo).parameters.items()
+        fsignature = inspect.signature(self.filtpo).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -8459,10 +8336,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'FILTPO ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def format(self,
@@ -8490,7 +8365,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -8579,7 +8454,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(format).parameters.items()
+        fsignature = inspect.signature(self.format).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -8588,10 +8463,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'FORMAT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def fxin(self,
@@ -8607,7 +8480,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         ------
         OUTPUT
@@ -8629,7 +8502,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(fxin).parameters.items()
+        fsignature = inspect.signature(self.fxin).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -8638,10 +8511,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'FXIN ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def fxout(self,
@@ -8660,7 +8531,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -8691,7 +8562,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(fxout).parameters.items()
+        fsignature = inspect.signature(self.fxout).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -8700,10 +8571,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'FXOUT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def gausan(self,
@@ -8723,7 +8592,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -8780,7 +8649,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(gausan).parameters.items()
+        fsignature = inspect.signature(self.gausan).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -8789,10 +8658,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'GAUSAN ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def gausanam(self,
@@ -8811,7 +8678,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -8849,7 +8716,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(gausanam).parameters.items()
+        fsignature = inspect.signature(self.gausanam).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -8858,10 +8725,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'GAUSANAM ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def gentra(self,
@@ -8877,7 +8742,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -8898,7 +8763,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(gentra).parameters.items()
+        fsignature = inspect.signature(self.gentra).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -8907,10 +8772,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'GENTRA ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def grade(self,
@@ -8969,7 +8832,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -9219,7 +9082,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(grade).parameters.items()
+        fsignature = inspect.signature(self.grade).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -9228,10 +9091,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'GRADE ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def griddc(self,
@@ -9261,7 +9122,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -9348,7 +9209,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(griddc).parameters.items()
+        fsignature = inspect.signature(self.griddc).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -9357,10 +9218,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'GRIDDC ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def grton(self,
@@ -9381,7 +9240,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -9442,7 +9301,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(grton).parameters.items()
+        fsignature = inspect.signature(self.grton).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -9451,10 +9310,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'GRTON ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def hisfit(self,
@@ -9470,7 +9327,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -9495,7 +9352,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(hisfit).parameters.items()
+        fsignature = inspect.signature(self.hisfit).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -9504,10 +9361,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'HISFIT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def histog(self,
@@ -9528,7 +9383,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -9574,7 +9429,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(histog).parameters.items()
+        fsignature = inspect.signature(self.histog).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -9583,10 +9438,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'HISTOG ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def holes3d(self,
@@ -9621,7 +9474,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -9776,7 +9629,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(holes3d).parameters.items()
+        fsignature = inspect.signature(self.holes3d).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -9785,10 +9638,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'HOLES3D ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def holmer(self,
@@ -9808,7 +9659,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -9845,7 +9696,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(holmer).parameters.items()
+        fsignature = inspect.signature(self.holmer).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -9854,10 +9705,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'HOLMER ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def igesin(self,
@@ -9873,7 +9722,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -9895,7 +9744,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(igesin).parameters.items()
+        fsignature = inspect.signature(self.igesin).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -9904,10 +9753,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'IGESIN ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def igesout(self,
@@ -9922,7 +9769,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -9936,7 +9783,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(igesout).parameters.items()
+        fsignature = inspect.signature(self.igesout).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -9945,10 +9792,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'IGESOUT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def ijkgen(self,
@@ -9969,7 +9814,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -10029,7 +9874,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(ijkgen).parameters.items()
+        fsignature = inspect.signature(self.ijkgen).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -10038,10 +9883,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'IJKGEN ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def indata(self,
@@ -10057,7 +9900,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -10079,7 +9922,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(indata).parameters.items()
+        fsignature = inspect.signature(self.indata).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -10088,10 +9931,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'INDATA ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def indest(self,
@@ -10146,7 +9987,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -10404,7 +10245,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(indest).parameters.items()
+        fsignature = inspect.signature(self.indest).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -10413,10 +10254,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'INDEST ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def inpddf(self,
@@ -10432,7 +10271,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         ------
         OUTPUT
@@ -10454,7 +10293,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(inpddf).parameters.items()
+        fsignature = inspect.signature(self.inpddf).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -10463,10 +10302,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'INPDDF ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def inpfil(self,
@@ -10482,7 +10319,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         ------
         OUTPUT
@@ -10503,7 +10340,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(inpfil).parameters.items()
+        fsignature = inspect.signature(self.inpfil).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -10512,10 +10349,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'INPFIL ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def inpfml(self,
@@ -10531,7 +10366,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         ------
         OUTPUT
@@ -10552,7 +10387,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(inpfml).parameters.items()
+        fsignature = inspect.signature(self.inpfml).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -10561,10 +10396,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'INPFML ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def inputc(self,
@@ -10580,7 +10413,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         ------
         OUTPUT
@@ -10601,7 +10434,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(inputc).parameters.items()
+        fsignature = inspect.signature(self.inputc).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -10610,10 +10443,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'INPUTC ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def inputd(self,
@@ -10628,7 +10459,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         ------
         OUTPUT
@@ -10642,7 +10473,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(inputd).parameters.items()
+        fsignature = inspect.signature(self.inputd).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -10651,10 +10482,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'INPUTD ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def inputw(self,
@@ -10671,7 +10500,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -10700,7 +10529,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(inputw).parameters.items()
+        fsignature = inspect.signature(self.inputw).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -10709,10 +10538,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'INPUTW ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def ipdnpg(self,
@@ -10741,7 +10568,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -10814,7 +10641,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(ipdnpg).parameters.items()
+        fsignature = inspect.signature(self.ipdnpg).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -10823,10 +10650,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'IPDNPG ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def isohol(self,
@@ -10864,7 +10689,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -10967,7 +10792,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(isohol).parameters.items()
+        fsignature = inspect.signature(self.isohol).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -10976,10 +10801,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'ISOHOL ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def isomet(self,
@@ -11023,7 +10846,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -11149,7 +10972,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(isomet).parameters.items()
+        fsignature = inspect.signature(self.isomet).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -11158,10 +10981,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'ISOMET ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def isoper(self,
@@ -11189,7 +11010,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -11254,7 +11075,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(isoper).parameters.items()
+        fsignature = inspect.signature(self.isoper).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -11263,10 +11084,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'ISOPER ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def isotri(self,
@@ -11297,7 +11116,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -11376,7 +11195,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(isotri).parameters.items()
+        fsignature = inspect.signature(self.isotri).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -11385,10 +11204,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'ISOTRI ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def join(self,
@@ -11411,7 +11228,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -11475,7 +11292,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(join).parameters.items()
+        fsignature = inspect.signature(self.join).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -11484,10 +11301,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'JOIN ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def kna(self,
@@ -11517,7 +11332,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -11631,7 +11446,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(kna).parameters.items()
+        fsignature = inspect.signature(self.kna).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -11640,10 +11455,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'KNA ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def layout(self,
@@ -11672,7 +11485,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -11772,7 +11585,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(layout).parameters.items()
+        fsignature = inspect.signature(self.layout).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -11781,10 +11594,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'LAYOUT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def link(self,
@@ -11799,7 +11610,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         ------
         OUTPUT
@@ -11813,7 +11624,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(link).parameters.items()
+        fsignature = inspect.signature(self.link).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -11822,10 +11633,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'LINK ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def link3d(self,
@@ -11854,7 +11663,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -11956,7 +11765,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(link3d).parameters.items()
+        fsignature = inspect.signature(self.link3d).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -11965,10 +11774,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'LINK3D ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def list(self,
@@ -11987,7 +11794,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -12022,7 +11829,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(list).parameters.items()
+        fsignature = inspect.signature(self.list).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -12031,10 +11838,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'LIST ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def listc(self,
@@ -12050,7 +11855,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -12072,7 +11877,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(listc).parameters.items()
+        fsignature = inspect.signature(self.listc).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -12081,10 +11886,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'LISTC ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def listdr(self,
@@ -12099,7 +11902,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         ------
         OUTPUT
@@ -12114,7 +11917,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(listdr).parameters.items()
+        fsignature = inspect.signature(self.listdr).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -12123,10 +11926,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'LISTDR ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def loadcf(self,
@@ -12143,7 +11944,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         ----------
         PARAMETERS
@@ -12165,7 +11966,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(loadcf).parameters.items()
+        fsignature = inspect.signature(self.loadcf).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -12174,10 +11975,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'LOADCF ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def lunicond(self,
@@ -12199,7 +11998,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -12252,7 +12051,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(lunicond).parameters.items()
+        fsignature = inspect.signature(self.lunicond).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -12261,10 +12060,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'LUNICOND ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def makedtm(self,
@@ -12298,7 +12095,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -12394,7 +12191,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(makedtm).parameters.items()
+        fsignature = inspect.signature(self.makedtm).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -12403,10 +12200,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'MAKEDTM ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def manova(self,
@@ -12423,7 +12218,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -12447,7 +12242,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(manova).parameters.items()
+        fsignature = inspect.signature(self.manova).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -12456,10 +12251,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'MANOVA ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def mdtran(self,
@@ -12495,7 +12288,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -12616,7 +12409,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(mdtran).parameters.items()
+        fsignature = inspect.signature(self.mdtran).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -12625,10 +12418,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'MDTRAN ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def mgsort(self,
@@ -12649,7 +12440,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -12701,7 +12492,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(mgsort).parameters.items()
+        fsignature = inspect.signature(self.mgsort).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -12710,10 +12501,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'MGSORT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def mikest(self,
@@ -12747,7 +12536,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -12904,7 +12693,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(mikest).parameters.items()
+        fsignature = inspect.signature(self.mikest).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -12913,10 +12702,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'MIKEST ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def mikscell(self,
@@ -12937,7 +12724,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -12991,7 +12778,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(mikscell).parameters.items()
+        fsignature = inspect.signature(self.mikscell).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -13000,10 +12787,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'MIKSCELL ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def minewd(self,
@@ -13023,7 +12808,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -13069,7 +12854,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(minewd).parameters.items()
+        fsignature = inspect.signature(self.minewd).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -13078,10 +12863,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'MINEWD ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def minlay(self,
@@ -13111,7 +12894,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -13214,7 +12997,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(minlay).parameters.items()
+        fsignature = inspect.signature(self.minlay).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -13223,10 +13006,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'MINLAY ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def minper(self,
@@ -13246,7 +13027,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -13300,7 +13081,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(minper).parameters.items()
+        fsignature = inspect.signature(self.minper).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -13309,10 +13090,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'MINPER ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def minwid(self,
@@ -13340,7 +13119,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -13410,7 +13189,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(minwid).parameters.items()
+        fsignature = inspect.signature(self.minwid).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -13419,10 +13198,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'MINWID ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def minzon(self,
@@ -13470,7 +13247,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -13627,7 +13404,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(minzon).parameters.items()
+        fsignature = inspect.signature(self.minzon).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -13636,10 +13413,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'MINZON ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def mod2blks(self,
@@ -13668,7 +13443,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -13754,7 +13529,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(mod2blks).parameters.items()
+        fsignature = inspect.signature(self.mod2blks).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -13763,10 +13538,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'MOD2BLKS ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def mod2xyz(self,
@@ -13787,7 +13560,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -13827,7 +13600,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(mod2xyz).parameters.items()
+        fsignature = inspect.signature(self.mod2xyz).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -13836,10 +13609,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'MOD2XYZ ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def modconf(self,
@@ -13863,7 +13634,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -13925,7 +13696,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(modconf).parameters.items()
+        fsignature = inspect.signature(self.modconf).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -13934,10 +13705,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'MODCONF ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def modenv(self,
@@ -14012,7 +13781,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -14315,7 +14084,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(modenv).parameters.items()
+        fsignature = inspect.signature(self.modenv).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -14324,10 +14093,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'MODENV ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def modres(self,
@@ -14350,7 +14117,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -14412,7 +14179,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(modres).parameters.items()
+        fsignature = inspect.signature(self.modres).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -14421,10 +14188,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'MODRES ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def modsplit(self,
@@ -14459,7 +14224,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -14582,7 +14347,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(modsplit).parameters.items()
+        fsignature = inspect.signature(self.modsplit).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -14591,10 +14356,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'MODSPLIT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def modtra(self,
@@ -14631,7 +14394,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -14749,7 +14512,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(modtra).parameters.items()
+        fsignature = inspect.signature(self.modtra).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -14758,10 +14521,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'MODTRA ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def modtri(self,
@@ -14780,7 +14541,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -14819,7 +14580,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(modtri).parameters.items()
+        fsignature = inspect.signature(self.modtri).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -14828,10 +14589,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'MODTRI ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def monaco(self,
@@ -14847,7 +14606,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         ------
         OUTPUT
@@ -14868,7 +14627,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(monaco).parameters.items()
+        fsignature = inspect.signature(self.monaco).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -14877,10 +14636,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'MONACO ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def nscore(self,
@@ -14905,7 +14662,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -14970,7 +14727,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(nscore).parameters.items()
+        fsignature = inspect.signature(self.nscore).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -14979,10 +14736,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'NSCORE ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def nsmodbak(self,
@@ -15001,7 +14756,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -15044,7 +14799,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(nsmodbak).parameters.items()
+        fsignature = inspect.signature(self.nsmodbak).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -15053,10 +14808,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'NSMODBAK ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def nstrans(self,
@@ -15077,7 +14830,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -15124,7 +14877,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(nstrans).parameters.items()
+        fsignature = inspect.signature(self.nstrans).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -15133,10 +14886,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'NSTRANS ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def origin(self,
@@ -15168,7 +14919,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -15259,7 +15010,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(origin).parameters.items()
+        fsignature = inspect.signature(self.origin).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -15268,18 +15019,18 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'ORIGIN ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def output(self,
                in_i,
+               out_o=None,
                fieldlst_i='optional',
                fieldnam_f='optional',
                f1_to_25_f=['optional'],
                csv_p=0,
+               sfx_p = '.dm',
                nodd_p=0,
                dplace_p=-1,
                implicit_p=0
@@ -15293,7 +15044,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -15305,6 +15056,15 @@ class init(object):
 
         FIELDLST:     File used to supply selected fields.
         required: No; default: ; range: 
+
+        ------
+        OUTPUT
+        ------
+
+        OUT:    Output filename. The filename CAN exceed 8 characters but this will result in a
+        pop-up warning in studio. By default, the input filename is shortened to 6 characters, then 
+        the '_e' suffix is added. if csv_p: the '.csv' suffix is added by default.
+        required: Yes; default: {IN}_e
 
         ------
         FIELDS
@@ -15344,7 +15104,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(output).parameters.items()
+        fsignature = inspect.signature(self.output).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -15353,10 +15113,21 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'OUTPUT ' + ' '.join(dm_arg_list)
-            
-        print(command)
         
-        #self.run_command(command)    
+        # Add output file specification
+        if csv_p > 0:
+            sfx_p = '.csv'
+
+        if out_o is None: # no output provided
+            out_o = in_i[:6] + '_e'
+        else:
+            if len(out_o) > 8:
+                logger.warning("parameter 'out_o' with value '{}' provided to command 'output' exceeds recommended length of 8 characters".format(out_o))
+        
+        outfile = " '{}{}'".format(out_o, sfx_p)
+        command += outfile
+               
+        self.run_command(command)    
         
         
     def panelest(self,
@@ -15409,7 +15180,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -15601,7 +15372,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(panelest).parameters.items()
+        fsignature = inspect.signature(self.panelest).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -15610,10 +15381,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PANELEST ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def panelk(self,
@@ -15646,7 +15415,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -15757,7 +15526,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(panelk).parameters.items()
+        fsignature = inspect.signature(self.panelk).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -15766,10 +15535,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PANELK ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def pca(self,
@@ -15794,7 +15561,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -15860,7 +15627,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(pca).parameters.items()
+        fsignature = inspect.signature(self.pca).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -15869,10 +15636,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PCA ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def pdrive(self,
@@ -15913,7 +15678,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -16076,7 +15841,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(pdrive).parameters.items()
+        fsignature = inspect.signature(self.pdrive).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -16085,10 +15850,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PDRIVE ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def perdtm(self,
@@ -16106,7 +15869,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -16133,7 +15896,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(perdtm).parameters.items()
+        fsignature = inspect.signature(self.perdtm).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -16142,10 +15905,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PERDTM ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def perfil(self,
@@ -16182,7 +15943,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -16306,7 +16067,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(perfil).parameters.items()
+        fsignature = inspect.signature(self.perfil).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -16315,10 +16076,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PERFIL ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def peropn(self,
@@ -16335,7 +16094,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -16365,7 +16124,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(peropn).parameters.items()
+        fsignature = inspect.signature(self.peropn).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -16374,10 +16133,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PEROPN ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def pertag(self,
@@ -16396,7 +16153,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -16437,7 +16194,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(pertag).parameters.items()
+        fsignature = inspect.signature(self.pertag).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -16446,10 +16203,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PERTAG ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def pertra(self,
@@ -16478,7 +16233,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -16575,7 +16330,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(pertra).parameters.items()
+        fsignature = inspect.signature(self.pertra).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -16584,10 +16339,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PERTRA ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def picdir(self,
@@ -16607,7 +16360,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         ------
         OUTPUT
@@ -16651,7 +16404,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(picdir).parameters.items()
+        fsignature = inspect.signature(self.picdir).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -16660,10 +16413,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PICDIR ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def picfld(self,
@@ -16683,7 +16434,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -16728,7 +16479,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(picfld).parameters.items()
+        fsignature = inspect.signature(self.picfld).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -16737,10 +16488,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PICFLD ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def picrec(self,
@@ -16764,7 +16513,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -16822,7 +16571,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(picrec).parameters.items()
+        fsignature = inspect.signature(self.picrec).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -16831,10 +16580,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PICREC ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def pitmod(self,
@@ -16866,7 +16613,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -16945,7 +16692,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(pitmod).parameters.items()
+        fsignature = inspect.signature(self.pitmod).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -16954,10 +16701,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PITMOD ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def pitres(self,
@@ -16994,7 +16739,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -17094,7 +16839,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(pitres).parameters.items()
+        fsignature = inspect.signature(self.pitres).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -17103,10 +16848,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PITRES ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def plotan(self,
@@ -17143,7 +16886,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -17244,7 +16987,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(plotan).parameters.items()
+        fsignature = inspect.signature(self.plotan).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -17253,10 +16996,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLOTAN ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def plotar(self,
@@ -17291,7 +17032,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -17391,7 +17132,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(plotar).parameters.items()
+        fsignature = inspect.signature(self.plotar).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -17400,10 +17141,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLOTAR ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def plotcn(self,
@@ -17456,7 +17195,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -17622,7 +17361,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(plotcn).parameters.items()
+        fsignature = inspect.signature(self.plotcn).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -17631,10 +17370,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLOTCN ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def plotcx(self,
@@ -17715,7 +17452,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -18004,7 +17741,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(plotcx).parameters.items()
+        fsignature = inspect.signature(self.plotcx).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -18013,10 +17750,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLOTCX ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def plotda(self,
@@ -18046,7 +17781,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -18125,7 +17860,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(plotda).parameters.items()
+        fsignature = inspect.signature(self.plotda).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -18134,10 +17869,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLOTDA ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def plotfr(self,
@@ -18172,7 +17905,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -18264,7 +17997,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(plotfr).parameters.items()
+        fsignature = inspect.signature(self.plotfr).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -18273,10 +18006,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLOTFR ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def plotft(self,
@@ -18310,7 +18041,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -18404,7 +18135,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(plotft).parameters.items()
+        fsignature = inspect.signature(self.plotft).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -18413,10 +18144,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLOTFT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def plotfx(self,
@@ -18471,7 +18200,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -18647,7 +18376,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(plotfx).parameters.items()
+        fsignature = inspect.signature(self.plotfx).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -18656,10 +18385,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLOTFX ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def plotgr(self,
@@ -18701,7 +18428,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -18825,7 +18552,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(plotgr).parameters.items()
+        fsignature = inspect.signature(self.plotgr).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -18834,10 +18561,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLOTGR ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def plothi(self,
@@ -18865,7 +18590,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -18935,7 +18660,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(plothi).parameters.items()
+        fsignature = inspect.signature(self.plothi).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -18944,10 +18669,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLOTHI ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def plotli(self,
@@ -18978,7 +18701,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -19061,7 +18784,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(plotli).parameters.items()
+        fsignature = inspect.signature(self.plotli).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -19070,10 +18793,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLOTLI ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def plotln(self,
@@ -19105,7 +18826,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -19191,7 +18912,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(plotln).parameters.items()
+        fsignature = inspect.signature(self.plotln).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -19200,10 +18921,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLOTLN ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def plotmx(self,
@@ -19258,7 +18977,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -19442,7 +19161,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(plotmx).parameters.items()
+        fsignature = inspect.signature(self.plotmx).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -19451,10 +19170,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLOTMX ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def plotpa(self,
@@ -19505,7 +19222,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -19652,7 +19369,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(plotpa).parameters.items()
+        fsignature = inspect.signature(self.plotpa).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -19661,10 +19378,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLOTPA ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def plotpe(self,
@@ -19710,7 +19425,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -19847,7 +19562,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(plotpe).parameters.items()
+        fsignature = inspect.signature(self.plotpe).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -19856,10 +19571,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLOTPE ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def plotpi(self,
@@ -19886,7 +19599,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -19953,7 +19666,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(plotpi).parameters.items()
+        fsignature = inspect.signature(self.plotpi).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -19962,10 +19675,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLOTPI ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def plotpx(self,
@@ -20015,7 +19726,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -20174,7 +19885,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(plotpx).parameters.items()
+        fsignature = inspect.signature(self.plotpx).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -20183,10 +19894,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLOTPX ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def plotsi(self,
@@ -20257,7 +19966,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -20461,7 +20170,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(plotsi).parameters.items()
+        fsignature = inspect.signature(self.plotsi).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -20470,10 +20179,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLOTSI ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def plotsk(self,
@@ -20535,7 +20242,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -20731,7 +20438,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(plotsk).parameters.items()
+        fsignature = inspect.signature(self.plotsk).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -20740,10 +20447,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLOTSK ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def plotsx(self,
@@ -20810,7 +20515,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -21039,7 +20744,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(plotsx).parameters.items()
+        fsignature = inspect.signature(self.plotsx).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -21048,10 +20753,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLOTSX ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def plotti(self,
@@ -21077,7 +20780,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -21138,7 +20841,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(plotti).parameters.items()
+        fsignature = inspect.signature(self.plotti).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -21147,10 +20850,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLOTTI ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def plottr(self,
@@ -21179,7 +20880,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -21251,7 +20952,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(plottr).parameters.items()
+        fsignature = inspect.signature(self.plottr).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -21260,10 +20961,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLOTTR ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def plottx(self,
@@ -21290,7 +20989,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -21357,7 +21056,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(plottx).parameters.items()
+        fsignature = inspect.signature(self.plottx).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -21366,10 +21065,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLOTTX ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def plotva(self,
@@ -21401,7 +21098,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -21489,7 +21186,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(plotva).parameters.items()
+        fsignature = inspect.signature(self.plotva).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -21498,10 +21195,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLOTVA ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def plotws(self,
@@ -21529,7 +21224,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -21601,7 +21296,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(plotws).parameters.items()
+        fsignature = inspect.signature(self.plotws).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -21610,10 +21305,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLOTWS ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def pltabl(self,
@@ -21632,7 +21325,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -21667,7 +21360,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(pltabl).parameters.items()
+        fsignature = inspect.signature(self.pltabl).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -21676,10 +21369,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLTABL ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def pltlay(self,
@@ -21701,7 +21392,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -21757,7 +21448,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(pltlay).parameters.items()
+        fsignature = inspect.signature(self.pltlay).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -21766,10 +21457,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PLTLAY ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def polreg(self,
@@ -21789,7 +21478,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -21832,7 +21521,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(polreg).parameters.items()
+        fsignature = inspect.signature(self.polreg).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -21841,10 +21530,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'POLREG ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def polydc(self,
@@ -21878,7 +21565,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -21977,7 +21664,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(polydc).parameters.items()
+        fsignature = inspect.signature(self.polydc).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -21986,10 +21673,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'POLYDC ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def ppqqplot(self,
@@ -22023,7 +21708,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -22122,7 +21807,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(ppqqplot).parameters.items()
+        fsignature = inspect.signature(self.ppqqplot).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -22131,10 +21816,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PPQQPLOT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def promod(self,
@@ -22162,7 +21845,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -22259,7 +21942,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(promod).parameters.items()
+        fsignature = inspect.signature(self.promod).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -22268,10 +21951,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PROMOD ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def proper(self,
@@ -22298,7 +21979,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -22373,7 +22054,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(proper).parameters.items()
+        fsignature = inspect.signature(self.proper).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -22382,10 +22063,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PROPER ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def protom(self,
@@ -22401,7 +22080,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         ------
         OUTPUT
@@ -22422,7 +22101,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(protom).parameters.items()
+        fsignature = inspect.signature(self.protom).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -22431,10 +22110,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PROTOM ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def protop(self,
@@ -22449,7 +22126,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         ------
         OUTPUT
@@ -22463,7 +22140,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(protop).parameters.items()
+        fsignature = inspect.signature(self.protop).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -22472,10 +22149,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PROTOP ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def ptcldwf(self,
@@ -22499,7 +22174,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -22566,7 +22241,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(ptcldwf).parameters.items()
+        fsignature = inspect.signature(self.ptcldwf).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -22575,10 +22250,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'PTCLDWF ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def qnlm(self,
@@ -22602,7 +22275,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -22655,7 +22328,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(qnlm).parameters.items()
+        fsignature = inspect.signature(self.qnlm).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -22664,10 +22337,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'QNLM ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def quantile(self,
@@ -22695,7 +22366,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -22779,7 +22450,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(quantile).parameters.items()
+        fsignature = inspect.signature(self.quantile).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -22788,10 +22459,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'QUANTILE ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def quickest(self,
@@ -22838,7 +22507,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -23018,7 +22687,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(quickest).parameters.items()
+        fsignature = inspect.signature(self.quickest).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -23027,10 +22696,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'QUICKEST ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def quig(self,
@@ -23045,7 +22712,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         ------
         OUTPUT
@@ -23059,7 +22726,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(quig).parameters.items()
+        fsignature = inspect.signature(self.quig).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -23068,10 +22735,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'QUIG ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def rank(self,
@@ -23091,7 +22756,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -23131,7 +22796,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(rank).parameters.items()
+        fsignature = inspect.signature(self.rank).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -23140,10 +22805,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'RANK ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def reblock(self,
@@ -23177,7 +22840,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -23272,7 +22935,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(reblock).parameters.items()
+        fsignature = inspect.signature(self.reblock).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -23281,10 +22944,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'REBLOCK ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def reccop(self,
@@ -23302,7 +22963,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -23333,7 +22994,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(reccop).parameters.items()
+        fsignature = inspect.signature(self.reccop).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -23342,10 +23003,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'RECCOP ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def recmodel(self,
@@ -23371,7 +23030,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -23454,7 +23113,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(recmodel).parameters.items()
+        fsignature = inspect.signature(self.recmodel).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -23463,10 +23122,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'RECMODEL ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def recmodwf(self,
@@ -23495,7 +23152,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -23592,7 +23249,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(recmodwf).parameters.items()
+        fsignature = inspect.signature(self.recmodwf).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -23601,10 +23258,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'RECMODWF ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def regmod(self,
@@ -23625,7 +23280,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -23682,7 +23337,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(regmod).parameters.items()
+        fsignature = inspect.signature(self.regmod).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -23691,10 +23346,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'REGMOD ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def regmow(self,
@@ -23721,7 +23374,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -23800,7 +23453,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(regmow).parameters.items()
+        fsignature = inspect.signature(self.regmow).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -23809,10 +23462,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'REGMOW ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def rename(self,
@@ -23828,7 +23479,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -23849,7 +23500,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(rename).parameters.items()
+        fsignature = inspect.signature(self.rename).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -23858,10 +23509,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'RENAME ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def repork(self,
@@ -23885,7 +23534,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -23937,7 +23586,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(repork).parameters.items()
+        fsignature = inspect.signature(self.repork).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -23946,10 +23595,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'REPORK ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def report(self,
@@ -23967,7 +23614,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -23995,7 +23642,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(report).parameters.items()
+        fsignature = inspect.signature(self.report).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -24004,10 +23651,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'REPORT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def rescat(self,
@@ -24035,7 +23680,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -24109,7 +23754,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(rescat).parameters.items()
+        fsignature = inspect.signature(self.rescat).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -24118,10 +23763,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'RESCAT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def restri(self,
@@ -24139,7 +23782,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -24170,7 +23813,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(restri).parameters.items()
+        fsignature = inspect.signature(self.restri).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -24179,10 +23822,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'RESTRI ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def rnlm(self,
@@ -24204,7 +23845,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -24251,7 +23892,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(rnlm).parameters.items()
+        fsignature = inspect.signature(self.rnlm).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -24260,10 +23901,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'RNLM ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def rotorder(self,
@@ -24288,7 +23927,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -24354,7 +23993,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(rotorder).parameters.items()
+        fsignature = inspect.signature(self.rotorder).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -24363,10 +24002,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'ROTORDER ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def scrfmt(self,
@@ -24384,7 +24021,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         ------
         OUTPUT
@@ -24417,7 +24054,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(scrfmt).parameters.items()
+        fsignature = inspect.signature(self.scrfmt).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -24426,10 +24063,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SCRFMT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def secdef(self,
@@ -24444,7 +24079,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         ------
         OUTPUT
@@ -24460,7 +24095,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(secdef).parameters.items()
+        fsignature = inspect.signature(self.secdef).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -24469,10 +24104,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SECDEF ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def selcop(self,
@@ -24493,7 +24126,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -24542,7 +24175,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(selcop).parameters.items()
+        fsignature = inspect.signature(self.selcop).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -24551,10 +24184,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SELCOP ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def seldel(self,
@@ -24575,7 +24206,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -24626,7 +24257,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(seldel).parameters.items()
+        fsignature = inspect.signature(self.seldel).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -24635,10 +24266,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SELDEL ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def selexy(self,
@@ -24664,7 +24293,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -24742,7 +24371,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(selexy).parameters.items()
+        fsignature = inspect.signature(self.selexy).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -24751,10 +24380,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SELEXY ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def selper(self,
@@ -24787,7 +24414,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -24890,7 +24517,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(selper).parameters.items()
+        fsignature = inspect.signature(self.selper).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -24899,10 +24526,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SELPER ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def seltri(self,
@@ -24931,7 +24556,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -25017,7 +24642,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(seltri).parameters.items()
+        fsignature = inspect.signature(self.seltri).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -25026,10 +24651,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SELTRI ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def selwf(self,
@@ -25060,7 +24683,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -25154,7 +24777,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(selwf).parameters.items()
+        fsignature = inspect.signature(self.selwf).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -25163,10 +24786,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SELWF ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def setval(self,
@@ -25183,7 +24804,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -25213,7 +24834,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(setval).parameters.items()
+        fsignature = inspect.signature(self.setval).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -25222,10 +24843,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SETVAL ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def sgsim(self,
@@ -25298,7 +24917,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -25624,7 +25243,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(sgsim).parameters.items()
+        fsignature = inspect.signature(self.sgsim).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -25633,10 +25252,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SGSIM ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def slimod(self,
@@ -25653,7 +25270,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -25680,7 +25297,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(slimod).parameters.items()
+        fsignature = inspect.signature(self.slimod).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -25689,10 +25306,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SLIMOD ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def sliper(self,
@@ -25714,7 +25329,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -25765,7 +25380,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(sliper).parameters.items()
+        fsignature = inspect.signature(self.sliper).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -25774,10 +25389,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SLIPER ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def smuhis(self,
@@ -25821,7 +25434,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -25968,7 +25581,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(smuhis).parameters.items()
+        fsignature = inspect.signature(self.smuhis).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -25977,10 +25590,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SMUHIS ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def smumod(self,
@@ -26020,7 +25631,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -26152,7 +25763,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(smumod).parameters.items()
+        fsignature = inspect.signature(self.smumod).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -26161,10 +25772,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SMUMOD ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def sortx(self,
@@ -26185,7 +25794,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -26237,7 +25846,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(sortx).parameters.items()
+        fsignature = inspect.signature(self.sortx).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -26246,10 +25855,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SORTX ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def splat(self,
@@ -26266,7 +25873,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -26290,7 +25897,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(splat).parameters.items()
+        fsignature = inspect.signature(self.splat).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -26299,10 +25906,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SPLAT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def splico(self,
@@ -26351,7 +25956,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -26502,7 +26107,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(splico).parameters.items()
+        fsignature = inspect.signature(self.splico).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -26511,10 +26116,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SPLICO ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def split(self,
@@ -26533,7 +26136,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -26593,7 +26196,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(split).parameters.items()
+        fsignature = inspect.signature(self.split).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -26602,10 +26205,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SPLIT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def st1gx(self,
@@ -26626,7 +26227,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -26670,7 +26271,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(st1gx).parameters.items()
+        fsignature = inspect.signature(self.st1gx).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -26679,10 +26280,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'ST1GX ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def statcom(self,
@@ -26705,7 +26304,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -26800,7 +26399,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(statcom).parameters.items()
+        fsignature = inspect.signature(self.statcom).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -26809,10 +26408,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'STATCOM ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def statnp(self,
@@ -26831,7 +26428,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -26866,7 +26463,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(statnp).parameters.items()
+        fsignature = inspect.signature(self.statnp).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -26875,10 +26472,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'STATNP ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def stats(self,
@@ -26902,7 +26497,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -26988,7 +26583,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(stats).parameters.items()
+        fsignature = inspect.signature(self.stats).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -26997,10 +26592,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'STATS ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def subjoi(self,
@@ -27019,7 +26612,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -27062,7 +26655,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(subjoi).parameters.items()
+        fsignature = inspect.signature(self.subjoi).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -27071,10 +26664,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SUBJOI ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def subwve(self,
@@ -27093,7 +26684,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -27136,7 +26727,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(subwve).parameters.items()
+        fsignature = inspect.signature(self.subwve).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -27145,10 +26736,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SUBWVE ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def sudttr(self,
@@ -27165,7 +26754,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         ------
         OUTPUT
@@ -27190,7 +26779,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(sudttr).parameters.items()
+        fsignature = inspect.signature(self.sudttr).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -27199,10 +26788,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SUDTTR ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def supes2(self,
@@ -27225,7 +26812,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -27271,7 +26858,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(supes2).parameters.items()
+        fsignature = inspect.signature(self.supes2).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -27280,10 +26867,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SUPES2 ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def supest(self,
@@ -27305,7 +26890,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -27351,7 +26936,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(supest).parameters.items()
+        fsignature = inspect.signature(self.supest).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -27360,10 +26945,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SUPEST ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def supoob(self,
@@ -27385,7 +26968,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -27424,7 +27007,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(supoob).parameters.items()
+        fsignature = inspect.signature(self.supoob).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -27433,10 +27016,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SUPOOB ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def suppcorr(self,
@@ -27465,7 +27046,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -27550,7 +27131,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(suppcorr).parameters.items()
+        fsignature = inspect.signature(self.suppcorr).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -27559,10 +27140,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SUPPCORR ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def surcal(self,
@@ -27585,7 +27164,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -27692,7 +27271,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(surcal).parameters.items()
+        fsignature = inspect.signature(self.surcal).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -27701,10 +27280,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SURCAL ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def surfip(self,
@@ -27737,7 +27314,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -27833,7 +27410,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(surfip).parameters.items()
+        fsignature = inspect.signature(self.surfip).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -27842,10 +27419,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SURFIP ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def surobs(self,
@@ -27872,7 +27447,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -28022,7 +27597,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(surobs).parameters.items()
+        fsignature = inspect.signature(self.surobs).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -28031,10 +27606,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SUROBS ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def surpoi(self,
@@ -28057,7 +27630,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -28112,7 +27685,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(surpoi).parameters.items()
+        fsignature = inspect.signature(self.surpoi).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -28121,10 +27694,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SURPOI ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def surtac(self,
@@ -28158,7 +27729,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -28321,7 +27892,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(surtac).parameters.items()
+        fsignature = inspect.signature(self.surtac).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -28330,10 +27901,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SURTAC ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def surtri(self,
@@ -28366,7 +27935,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -28470,7 +28039,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(surtri).parameters.items()
+        fsignature = inspect.signature(self.surtri).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -28479,10 +28048,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SURTRI ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def survig(self,
@@ -28513,7 +28080,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -28603,7 +28170,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(survig).parameters.items()
+        fsignature = inspect.signature(self.survig).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -28612,10 +28179,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SURVIG ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def survin(self,
@@ -28639,7 +28204,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -28702,7 +28267,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(survin).parameters.items()
+        fsignature = inspect.signature(self.survin).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -28711,10 +28276,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SURVIN ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def survou(self,
@@ -28732,7 +28295,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -28764,7 +28327,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(survou).parameters.items()
+        fsignature = inspect.signature(self.survou).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -28773,10 +28336,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SURVOU ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def sustp2(self,
@@ -28792,7 +28353,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         ------
         OUTPUT
@@ -28815,7 +28376,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(sustp2).parameters.items()
+        fsignature = inspect.signature(self.sustp2).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -28824,10 +28385,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SUSTP2 ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def sustpe(self,
@@ -28843,7 +28402,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         ------
         OUTPUT
@@ -28864,7 +28423,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(sustpe).parameters.items()
+        fsignature = inspect.signature(self.sustpe).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -28873,10 +28432,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SUSTPE ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def swathplt(self,
@@ -28913,7 +28470,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -29032,7 +28589,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(swathplt).parameters.items()
+        fsignature = inspect.signature(self.swathplt).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -29041,10 +28598,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'SWATHPLT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def tabres(self,
@@ -29060,7 +28615,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -29092,7 +28647,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(tabres).parameters.items()
+        fsignature = inspect.signature(self.tabres).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -29101,10 +28656,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'TABRES ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def tblin(self,
@@ -29131,7 +28684,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -29239,7 +28792,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(tblin).parameters.items()
+        fsignature = inspect.signature(self.tblin).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -29248,10 +28801,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'TBLIN ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def tdin(self,
@@ -29266,7 +28817,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         ------
         OUTPUT
@@ -29280,7 +28831,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(tdin).parameters.items()
+        fsignature = inspect.signature(self.tdin).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -29289,10 +28840,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'TDIN ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def tdout(self,
@@ -29311,7 +28860,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -29345,7 +28894,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(tdout).parameters.items()
+        fsignature = inspect.signature(self.tdout).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -29354,10 +28903,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'TDOUT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def terplt(self,
@@ -29377,7 +28924,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -29414,7 +28961,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(terplt).parameters.items()
+        fsignature = inspect.signature(self.terplt).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -29423,10 +28970,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'TERPLT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def tongrad(self,
@@ -29459,7 +29004,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -29555,7 +29100,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(tongrad).parameters.items()
+        fsignature = inspect.signature(self.tongrad).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -29564,10 +29109,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'TONGRAD ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def trend(self,
@@ -29589,7 +29132,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -29637,7 +29180,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(trend).parameters.items()
+        fsignature = inspect.signature(self.trend).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -29646,10 +29189,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'TREND ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def tricon(self,
@@ -29691,7 +29232,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -29808,7 +29349,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(tricon).parameters.items()
+        fsignature = inspect.signature(self.tricon).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -29817,10 +29358,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'TRICON ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def trifil(self,
@@ -29852,7 +29391,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -29957,7 +29496,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(trifil).parameters.items()
+        fsignature = inspect.signature(self.trifil).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -29966,10 +29505,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'TRIFIL ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def tripoi(self,
@@ -29991,7 +29528,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -30039,7 +29576,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(tripoi).parameters.items()
+        fsignature = inspect.signature(self.tripoi).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -30048,10 +29585,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'TRIPOI ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def trival(self,
@@ -30081,7 +29616,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -30180,7 +29715,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(trival).parameters.items()
+        fsignature = inspect.signature(self.trival).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -30189,10 +29724,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'TRIVAL ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def trivol(self,
@@ -30214,7 +29747,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -30267,7 +29800,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(trivol).parameters.items()
+        fsignature = inspect.signature(self.trivol).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -30276,10 +29809,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'TRIVOL ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def truethk(self,
@@ -30297,7 +29828,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -30329,7 +29860,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(truethk).parameters.items()
+        fsignature = inspect.signature(self.truethk).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -30338,10 +29869,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'TRUETHK ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def unfold(self,
@@ -30385,7 +29914,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -30576,7 +30105,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(unfold).parameters.items()
+        fsignature = inspect.signature(self.unfold).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -30585,10 +30114,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'UNFOLD ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def unifcond(self,
@@ -30626,7 +30153,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -30742,7 +30269,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(unifcond).parameters.items()
+        fsignature = inspect.signature(self.unifcond).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -30751,10 +30278,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'UNIFCOND ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def unlink(self,
@@ -30769,7 +30294,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -30783,7 +30308,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(unlink).parameters.items()
+        fsignature = inspect.signature(self.unlink).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -30792,10 +30317,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'UNLINK ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def valida(self,
@@ -30811,7 +30334,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -30832,7 +30355,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(valida).parameters.items()
+        fsignature = inspect.signature(self.valida).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -30841,10 +30364,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'VALIDA ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def varfit(self,
@@ -30865,7 +30386,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -30925,7 +30446,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(varfit).parameters.items()
+        fsignature = inspect.signature(self.varfit).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -30934,10 +30455,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'VARFIT ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def vcontour(self,
@@ -30953,7 +30472,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -30974,7 +30493,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(vcontour).parameters.items()
+        fsignature = inspect.signature(self.vcontour).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -30983,10 +30502,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'VCONTOUR ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def vgm3dmap(self,
@@ -31017,7 +30534,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -31108,7 +30625,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(vgm3dmap).parameters.items()
+        fsignature = inspect.signature(self.vgm3dmap).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -31117,10 +30634,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'VGM3DMAP ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def vgram(self,
@@ -31176,7 +30691,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -31400,7 +30915,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(vgram).parameters.items()
+        fsignature = inspect.signature(self.vgram).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -31409,10 +30924,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'VGRAM ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def weave(self,
@@ -31432,7 +30945,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -31478,7 +30991,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(weave).parameters.items()
+        fsignature = inspect.signature(self.weave).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -31487,10 +31000,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'WEAVE ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def wedgevol(self,
@@ -31520,7 +31031,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -31590,7 +31101,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(wedgevol).parameters.items()
+        fsignature = inspect.signature(self.wedgevol).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -31599,10 +31110,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'WEDGEVOL ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def wfcode(self,
@@ -31636,7 +31145,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -31757,7 +31266,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(wfcode).parameters.items()
+        fsignature = inspect.signature(self.wfcode).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -31766,10 +31275,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'WFCODE ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def wfexpnd(self,
@@ -31790,7 +31297,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -31840,7 +31347,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(wfexpnd).parameters.items()
+        fsignature = inspect.signature(self.wfexpnd).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -31849,10 +31356,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'WFEXPND ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def wftrend(self,
@@ -31878,7 +31383,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -31948,7 +31453,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(wftrend).parameters.items()
+        fsignature = inspect.signature(self.wftrend).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -31957,10 +31462,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'WFTREND ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def wirefill(self,
@@ -31987,7 +31490,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -32074,7 +31577,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(wirefill).parameters.items()
+        fsignature = inspect.signature(self.wirefill).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -32083,10 +31586,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'WIREFILL ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def wirepe(self,
@@ -32114,7 +31615,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -32190,7 +31691,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(wirepe).parameters.items()
+        fsignature = inspect.signature(self.wirepe).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -32199,10 +31700,8 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'WIREPE ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         
     def xvalid(self,
@@ -32234,7 +31733,7 @@ class init(object):
         This avoids issues due to incorrect default valuesin the docs and makes
         that the true default values are used instead.
         Author: Mathijs van de Ven
-        Date: 06/02/2023
+        Date: 07/02/2023
 
         -----
         INPUT
@@ -32413,7 +31912,7 @@ class init(object):
         # collect local arguments and identify changed keyword-arguments
 
         flocals = locals()
-        fsignature = inspect.signature(xvalid).parameters.items()
+        fsignature = inspect.signature(self.xvalid).parameters.items()
         
         # Get python variables as a dictionary of arg:value pairs
         user_args = utils.getChangedArgs(flocals, fsignature)
@@ -32422,9 +31921,7 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'XVALID ' + ' '.join(dm_arg_list)
-            
-        print(command)
-        
-        #self.run_command(command)    
+               
+        self.run_command(command)    
         
         

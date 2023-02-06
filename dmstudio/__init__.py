@@ -7,3 +7,4 @@ import dmstudio.dmfiles
 import dmstudio.initialize
 import dmstudio.special
 import dmstudio.superprocess
+import dmstudio.utils

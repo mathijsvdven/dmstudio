@@ -13,6 +13,7 @@ To do:
 
 '''
 import dmstudio.initialize
+import dmstudio.utils as utils
 import logging
 
 logging.basicConfig(filename=dmstudio.initialize.cwd/"dmstudio_log.txt", level=logging.DEBUG, 
