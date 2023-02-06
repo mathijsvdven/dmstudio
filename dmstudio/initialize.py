@@ -1,7 +1,14 @@
 import win32com.client
-import sys
 import glob
 import numpy as np
+import logging
+from pathlib import Path
+
+cwd = Path().absolute()
+
+logging.basicConfig(filename=cwd/"dmstudio_log.txt", level=logging.DEBUG, 
+                    format='[%(asctime)s] %(name)s %(levelname)s: %(message)s')
+logger = logging.getLogger(__name__)
 
 def _scriptinit(dm_object):
     '''
@@ -69,7 +76,7 @@ def studio(version):
                     except:
                         assert False, "No valid Studio version is active"
 
-    # print('Connected to Datamine: {}'.format(oScript))
+    logging.info('Connected to Datamine: {}'.format(oScript))
 
     return oScript;
 

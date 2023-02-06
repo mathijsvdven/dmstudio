@@ -13,6 +13,11 @@ To do:
 
 '''
 import dmstudio.initialize
+import logging
+
+logging.basicConfig(filename=dmstudio.initialize.cwd/"dmstudio_log.txt", level=logging.DEBUG, 
+                    format='[%(asctime)s] %(name)s %(levelname)s: %(message)s')
+logger = logging.getLogger(__name__)
 
 # constant to avoid redundant COM connections which slows down processing
 
@@ -64,6 +69,7 @@ class init(object):
 
         try:
             self.oScript.Parsecommand(command)
+            logger.info("Running command: {}".format(command))
         except:
             print("Unexpected error:")
 
