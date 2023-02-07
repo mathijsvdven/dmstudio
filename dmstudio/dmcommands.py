@@ -32,7 +32,7 @@ class init(object):
             the initializtion will try different versions starting with StudioRM then Studio3, StudioEM, and StudioRMPro.
 
         """
-        print('__init__ method of class dmcommands.init triggered...')
+
         self.oScript = OSCRIPTCON
         self.version = version
         self.dry_run = dry_run
@@ -7855,7 +7855,8 @@ class init(object):
               in_i,
               out_o,
               print_p=0,
-              approx_p=0
+              approx_p=0,
+              expression='optional'
               ):
 
         """
@@ -7906,6 +7907,15 @@ class init(object):
         dm_arg_list = utils.getDMArgList(user_args)
         
         command = 'EXTRA ' + ' '.join(dm_arg_list)
+
+        if expression != "optional":
+            if type(expression) == list:
+                # exp_list = ' '.join(expression)
+                # for i in range(len(expression)):
+                    # exp_list += "'" + expression[i] + "' "
+                command += " '{}' GO".format(' '.join(expression))
+            else:
+                command += " '{}' GO".format(expression)
                
         self.run_command(command)    
         

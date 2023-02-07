@@ -66,15 +66,32 @@ def getDMArg(pyvar, argdata):
     Also tries to convert list variables such as f1_to_10_p and creates 
     DM variables for each list entry based on the variable name root.
     """
-    prefix_dict = {'_i':'1_&', '_o':'2_&', '_f':'3_*', '_p':'4_@'} # numerals for sorting
-    pyvar_ = pyvar[:-2]
-    pfx = prefix_dict[pyvar[-2:]]
-    
-    # check if range
-    dm_args = convertListArgs(pyvar_, argdata, pfx)
-    
-    if dm_args == pyvar_:
-        dm_args = convertVariable(pyvar_, argdata, pfx)
+    prefix_dict = {'_i':'1_&', '_o':'2_&', '_f':'3_*', '_p':'4_@', 'special':'5_'} # numerals for sorting
+    special_vars = ['expression', 'retrieval']
+
+    # Special variables, no prefix
+    if pyvar in special_vars:
+        if pyvar == 'expression':
+            # dm_args = "{}'{}' GO".format(prefix_dict['special'], argdata)
+            dm_args = None
+        elif pyvar == 'retrieval':
+            # dm_args = "{}{".format(prefix_dict['specia']) + "{}".format(argdata) + "}"
+            dm_args = None
+
+    else:
+        try: 
+            sfx = pyvar[-2:]
+            pfx = prefix_dict[sfx]
+        except:
+            raise KeyError("Argument '{}' does not have a valid suffix. Valid are '_i', '_o', '_p', and '_f', provided: {}".format(pyvar, sfx))
+        
+        pyvar_ = pyvar[:-2]
+   
+        # check if range
+        dm_args = convertListArgs(pyvar_, argdata, pfx)
+        
+        if dm_args == pyvar_:
+            dm_args = convertVariable(pyvar_, argdata, pfx)
     
     return dm_args
     
@@ -155,7 +172,9 @@ def getDMArgList(arg_value_dict):
     # where '#_' is a prefix used for sorting
     dm_arg_list = []
     for k, v in arg_value_dict.items():
-        dm_arg_list.append(getDMArg(k, v))
+        dmarg = getDMArg(k, v)
+        if dmarg is not None:
+            dm_arg_list.append(dmarg)
     
     # Sort arguments
     dm_arg_list.sort()
