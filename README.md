@@ -1,7 +1,14 @@
 DMSTUDIO
 ========
 
-Python package for Datamine Studio scripting. 
+Python wrapper for Datamine Studio scripting 
+--------------------------------------------
+
+This README is copied verbatim from the original repository with minor additions. The module was significantly overhauled and updated in February 2023 to provide support for RMPro and provide a more pythonic implementation of the wrapper commands. Required arguments were replaced with keywords, while optional arguments are retained as keyword arguments with explicit defaults. Defaults were taken from the DM help files and are not entirely consistent, only specified keyword arguments are parsed to Studio to avoid issues due to errors in the documentation.
+
+
+Original README Text
+--------------------
 
 Originally created by Sean Horan, Principal Geologist/Geostatistician, RPA Consulting.
 
@@ -18,6 +25,7 @@ Versions supported are:
 * Datamine Studio version 3
 * Datamine Studio version RM
 * Datamine Studio version EM
+* Datamine Studio RM (Feb 2023)
 
 The package is made up of the following modules:
 

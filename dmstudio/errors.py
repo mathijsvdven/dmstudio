@@ -3,5 +3,5 @@ class COM_Error(Exception):
         super().__init__(message)
 
 class LicenseError(Exception):
-    def __Init__(self, message = "No valid Studio version was found"):
+    def __init__(self, message = "No valid Studio version was found"):
         super().__init__(message)
