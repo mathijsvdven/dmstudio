@@ -32,6 +32,7 @@ class init(object):
             the initializtion will try different versions starting with StudioRM then Studio3, StudioEM, and StudioRMPro.
 
         """
+        print('__init__ method of class dmcommands.init triggered...')
         self.oScript = OSCRIPTCON
         self.version = version
         self.dry_run = dry_run
