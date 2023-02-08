@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 def readme():
     with open('README.rst') as f:
@@ -17,7 +17,7 @@ setup(name='dmstudio',
       author='Sean Horan',
       author_email='sean.horan@rpacan.com',
       license='MIT',
-      packages=['dmstudio'],
       include_package_data=True,
       package_data={'':['LICENCES.txt'], '':['README.md']},
+      packages=find_packages(),
       zip_safe=False)
