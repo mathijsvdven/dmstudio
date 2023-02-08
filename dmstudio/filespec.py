@@ -18,25 +18,25 @@ class StudioFileSpec(object):
 
     '''
     # columns required for creating and importing files to Studio
-    columns = ['Field Name', 'Field Type', 'Length', 'Keep', 'Default']
+    spec_columns = ['Field Name', 'Field Type', 'Length', 'Keep', 'Default']
 
-    def __init__(self, definition=None):
+    def __init__(self, spec=None):
+        self.spec = spec # a pandas Dataframe
 
-        if definition is None:
+        if self.spec is None:
             # Create empty file_definition
-            self.definition = pd.DataFrame(columns=self.columns)
+            self.spec = pd.DataFrame(columns=self.spec_columns)
             
         else:
-            #
-            for col in self.columns:
-                if col not in definition.columns:
-                    raise "Column "  + col + " not found in definition. Columns 'Field Name', 'Field Type', 'Length'," \
-                                             " 'Keep', 'Default' are required"
-            self.definition = definition
+            for col in self.spec_columns:
+                if col not in self.spec.columns:
+                    raise IndexError("Required column {} not found in file specification. Columns 'Field Name', \
+                                    'Field Type', 'Length', 'Keep', 'Default' are required".format(col))
+            self.spec = self.spec[self.spec_columns].copy()
 
 
     def __repr__(self):
-        return self.definition.__repr__()
+        return self.spec.__repr__()
 
     def add_field(self, field_name, field_type, length='', keep='Y', default=''):
         """
@@ -52,7 +52,7 @@ class StudioFileSpec(object):
 
         dmtemp = pd.DataFrame(data)
         dmtemp = dmtemp[self.columns]
-        self.definition = self.definition.append(dmtemp).reset_index(drop=True)
+        self.spec = self.spec.append(dmtemp).reset_index(drop=True)
 
     @classmethod
     def from_text(cls, filepath, **kwargs):
@@ -105,13 +105,14 @@ class StudioFileSpec(object):
                 else:
                     length.append(int((df[column].str.len().max()-1)/4+1)*4)
 
-        definition = pd.DataFrame({'Field Name': field_names, 'Field Type': field_type, 'Length': length})
-        definition['Keep'] = 'Y'
-        definition['Default'] = default
+        spec = pd.DataFrame({'Field Name': field_names, 'Field Type': field_type, 'Length': length})
+        spec['Keep'] = 'Y'
+        spec['Default'] = default
 
-        return cls(definition)
+        # instantiate the class using the parsed definition
+        return cls(spec)
 
-def read_csv(filepath, **kwargs):
+def map_csv(filepath, **kwargs):
     """
     Convenience function for pandas-like operation
     """    
