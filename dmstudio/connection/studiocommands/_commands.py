@@ -1,6 +1,9 @@
 import dmstudio.connection.studiocommands.utils as utils
 from dmstudio.connection.studiocommands.runner import Runner
 import inspect
+import logging
+
+logger = logging.getLogger(__name__)
 
 class Command(Runner):
     def __init__(self):
@@ -7771,15 +7774,6 @@ class Command(Runner):
         
         command = 'EXTRA ' + ' '.join(dm_arg_list)
 
-        if expression != "optional":
-            if type(expression) == list:
-                # exp_list = ' '.join(expression)
-                # for i in range(len(expression)):
-                    # exp_list += "'" + expression[i] + "' "
-                command += " '{}' GO".format(' '.join(expression))
-            else:
-                command += " '{}' GO".format(expression)
-                
         self.run_command(command)    
         
         
@@ -21891,54 +21885,7 @@ class Command(Runner):
         
         command = 'PROPER ' + ' '.join(dm_arg_list)
                 
-        self.run_command(command)    
-        
-        
-    def protom(self,
-                out_o,
-                rotmod_p=0
-                ):
-
-        """
-        This is auto-generated documentation. For more command information visit
-        the Datamine help file.
-        Default values in function definitions were adopted from the documentation
-        files. Keyword argumentsare used only if keyword-value != default value.
-        This avoids issues due to incorrect default valuesin the docs and makes
-        that the true default values are used instead.
-        Author: Mathijs van de Ven
-        Date: 07/02/2023
-
-        ------
-        OUTPUT
-        ------
-
-        OUT:     Output prototype model.
-        required: Yes; default: ; range: 
-
-        ----------
-        PARAMETERS
-        ----------
-
-        ROTMOD:     Option Description 1 For rotated model.(0).
-        required: No; default: 0; range: 0,1
-
-        """
-
-        # collect local arguments and identify changed keyword-arguments
-
-        flocals = locals()
-        fsignature = inspect.signature(self.protom).parameters.items()
-        
-        # Get python variables as a dictionary of arg:value pairs
-        user_args = utils.getChangedArgs(flocals, fsignature)
-        
-        # Convert python variables to a list of Studio argument:value strings
-        dm_arg_list = utils.getDMArgList(user_args)
-        
-        command = 'PROTOM ' + ' '.join(dm_arg_list)
-                
-        self.run_command(command)    
+        self.run_command(command)      
         
         
     def protop(self,

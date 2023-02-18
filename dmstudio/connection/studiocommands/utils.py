@@ -4,10 +4,6 @@ import copy
 import logging
 from pathlib import Path
 
-cwd = Path().absolute() 
-
-logging.basicConfig(filename=cwd/"dmstudio_log.txt", level=logging.DEBUG, 
-                    format='[%(asctime)s] %(name)s %(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
 
 # Lookup dict of Studio variables with special characters, not allowed in Python
@@ -66,17 +62,21 @@ def getDMArg(pyvar, argdata):
     Also tries to convert list variables such as f1_to_10_p and creates 
     DM variables for each list entry based on the variable name root.
     """
-    prefix_dict = {'_i':'1_&', '_o':'2_&', '_f':'3_*', '_p':'4_@', 'special':'5_'} # numerals for sorting
+    prefix_dict = {'_i':'1_&', '_o':'2_&', '_f':'3_*', '_p':'4_@', 'expression':'5_', 'retrieval':'6_'} # numerals for sorting
     special_vars = ['expression', 'retrieval']
 
     # Special variables, no prefix
     if pyvar in special_vars:
         if pyvar == 'expression':
-            # dm_args = "{}'{}' GO".format(prefix_dict['special'], argdata)
-            dm_args = None
+            if isinstance(argdata, list):
+                argstr = " '{}' GO".format(' '.join(argdata))
+            elif isinstance(argdata, str):
+                argstr = " '{}' GO".format(argdata)
+                
         elif pyvar == 'retrieval':
-            # dm_args = "{}{".format(prefix_dict['specia']) + "{}".format(argdata) + "}"
-            dm_args = None
+            argstr = "'{{}}'".format(argdata)
+
+        dm_args = "{}{}".format(prefix_dict[pyvar], argstr)
 
     else:
         try: 
@@ -88,9 +88,10 @@ def getDMArg(pyvar, argdata):
         pyvar_ = pyvar[:-2]
    
         # check if range
-        dm_args = convertListArgs(pyvar_, argdata, pfx)
+        try:
+            dm_args = convertListArgs(pyvar_, argdata, pfx)
         
-        if dm_args == pyvar_:
+        except TypeError:
             dm_args = convertVariable(pyvar_, argdata, pfx)
     
     return dm_args
@@ -143,23 +144,24 @@ def convertListArgs(pyvar, argdata, pfx):
                                  
             else:
                 dm_pfx = re.sub(pat, '', pyvar)
-                dm_vars = ["{}{}".format(dm_pfx, v) for v in range(start, narg+1)]
+                dm_vars = ["{}{}".format(dm_pfx, v) for v in range(start, narg+start)]
                 dm_vars_vals = zip(dm_vars, argdata)
                 joinstr = ' ' + pfx
                 argstr = pfx + joinstr.join(['{}={}'.format(i.upper(),j) for i, j in dm_vars_vals])
-                return argstr
             
         elif isinstance(argdata, str):
             # Assume single value
             dm_pfx = re.sub(pat, '', pyvar)
             argstr = ' ' + pfx + "{}{}={}".format(dm_pfx, start, argdata)
-            return argstr
-        
+            
         else:
-            raise ValueError("variable {} provided of type {}, expected a list".format(pyvar, type(pyvar)))
+            raise ValueError("range variable {} provided of type {}, expected a string or a list".format(pyvar, type(pyvar)))
         
+        logger.debug("range variable '{}' with value '{}' written to argstr: '{}'".format(pyvar, argdata, argstr))
+        return argstr
+
     else:
-        return pyvar
+        raise TypeError("variable '{}' is not a range variable.".format(pyvar))
         
 def getDMArgList(arg_value_dict):
     """
