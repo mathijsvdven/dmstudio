@@ -1,5 +1,5 @@
-import dmstudio.connection.studiocommands.utils as utils
-from dmstudio.connection.studiocommands.runner import Runner
+import dmstudio.connection.studiocommands._utils as utils
+from dmstudio.connection.studiocommands._runner import Runner
 import inspect
 import logging
 

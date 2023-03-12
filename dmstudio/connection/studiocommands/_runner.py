@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 class Runner:
     """
-    Base class that supports inheritance of the run_command method called by the Command and Modcommand superclasses through.
+    Base class that supports inheritance of the run_command method called by the Command and Modcommand superclasses.
     """
     def __init__(self):
         """
