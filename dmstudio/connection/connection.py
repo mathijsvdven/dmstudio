@@ -8,9 +8,6 @@ from dmstudio.connection.studiocommands._commands import Command
 from dmstudio.connection.studiocommands._modcommands import Modcommand
 
 cwd = Path().absolute()
-logfile = cwd/"dmstudio_log.txt"
-logging.basicConfig(filename=logfile, level=logging.DEBUG, 
-                    format='[%(asctime)s] %(name)s %(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
 
 # constant to avoid redundant COM connections which slows down processing

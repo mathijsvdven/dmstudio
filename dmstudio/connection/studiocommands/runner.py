@@ -4,11 +4,8 @@ import glob
 import numpy as np
 
 from dmstudio.connection.errors import COM_Error, ApplicationError
-
 cwd = Path().absolute()
-logfile = cwd/"dmstudio_log.txt"
-logging.basicConfig(filename=logfile, level=logging.DEBUG, 
-                    format='[%(asctime)s] %(name)s %(levelname)s: %(message)s')
+
 logger = logging.getLogger(__name__)
 
 class Runner:
@@ -46,7 +43,7 @@ class Runner:
                 self.oScript.ParseCommand(command)
             except Exception as e:
                 logger.error("An issue occurred parsing this command to Studio, please inspect the parsed arguments and validate against the help files, error message: \n{}".format(e))
-                raise COM_Error("An issue occurred parsing this command to Studio, please inspect the log at {}\dmstudio_log.txt and validate the command".format(logfile))
+                raise COM_Error("An issue occurred parsing this command to Studio, please inspect the log at {}\dmstudio_log.txt and validate the command".format(str(cwd)))
 
         # update the dmdir.py file containing list of .dm files in current directory
         self.make_dmdir()
