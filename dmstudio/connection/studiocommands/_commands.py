@@ -1,6 +1,9 @@
 import dmstudio.connection.studiocommands.utils as utils
 from dmstudio.connection.studiocommands.runner import Runner
 import inspect
+import logging
+
+logger = logging.getLogger(__name__)
 
 class Command(Runner):
     def __init__(self):

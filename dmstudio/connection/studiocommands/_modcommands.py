@@ -1,9 +1,12 @@
 import inspect
 import pandas as pd
+import logging
 
 import dmstudio.connection.studiocommands.utils as utils
 from dmstudio.filespec import StudioFileSpec
 from dmstudio.connection.studiocommands.runner import Runner
+
+logger = logging.getLogger(__name__)
 
 # Modified Studio Commands
 
