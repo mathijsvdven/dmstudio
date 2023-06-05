@@ -16313,98 +16313,6 @@ class Command(Runner):
         self.run_command(command)    
         
         
-    def picrec(self,
-                in_i,
-                out_o,
-                fieldlst_i='optional',
-                fieldnam_f='optional',
-                f1_f='optional',
-                f2_f='optional',
-                f3_f='optional',
-                f4_f='optional',
-                f5_f='optional',
-                append_p=0
-                ):
-
-        """
-        This is auto-generated documentation. For more command information visit
-        the Datamine help file.
-        Default values in function definitions were adopted from the documentation
-        files. Keyword argumentsare used only if keyword-value != default value.
-        This avoids issues due to incorrect default valuesin the docs and makes
-        that the true default values are used instead.
-        Author: Mathijs van de Ven
-        Date: 07/02/2023
-
-        -----
-        INPUT
-        -----
-
-        IN:     The name of the file from which records are to be selected.
-        required: Yes; default: ; range: 
-
-        FIELDLST:     Optional file to specify fields to output.
-        required: No; default: ; range: 
-
-        ------
-        OUTPUT
-        ------
-
-        OUT:     The name of the file to which selected records are to be written.
-        required: Yes; default: ; range: 
-
-        ------
-        FIELDS
-        ------
-
-        FIELDNAM:     Field in FIELDLST that holds the names of the data fields to output in
-        OUT.
-        required: No; default: ; range: 
-
-        F1:     The name of the first field to be transferred from the input file to the
-        output file. If no fields are explicitly named, all fields are copied. You
-        may only apply relational and pattern matching tests to fields that are to
-        appear in the output file.
-        required: No; default: ; range: 
-
-        F2:     Second field to be copied.
-        required: No; default: ; range: 
-
-        F3:     Third field to be copied.
-        required: No; default: ; range: 
-
-        F4:     Fourth field to be copied.
-        required: No; default: ; range: 
-
-        F5:     Fifth field to be copied.
-        required: No; default: ; range: 
-
-        ----------
-        PARAMETERS
-        ----------
-
-        APPEND:     If set to 1 then selected records will be appended to the OUT file,
-        provided it exists and has the same fields as the input file (0).
-        required: No; default: 0; range: 0,1
-
-        """
-
-        # collect local arguments and identify changed keyword-arguments
-
-        flocals = locals()
-        fsignature = inspect.signature(self.picrec).parameters.items()
-        
-        # Get python variables as a dictionary of arg:value pairs
-        user_args = utils.getChangedArgs(flocals, fsignature)
-        
-        # Convert python variables to a list of Studio argument:value strings
-        dm_arg_list = utils.getDMArgList(user_args)
-        
-        command = 'PICREC ' + ' '.join(dm_arg_list)
-                
-        self.run_command(command)    
-        
-        
     def pitmod(self,
                 wiretr_i,
                 wirept_i,
@@ -28819,7 +28727,8 @@ class Command(Runner):
         KEY1-20:     Key fields for reserve classification.
         required: No; default: ; range: 
 
-        F1-20:     Grade fields for evaluation. F1 is primary grade field.
+        F1-20:     Grade fields for evaluation. F1 is primary grade field. NOTE THAT ORDER MATTERS as 
+        cutoffs and tonnages are determined from F1.
         required: No; default: ; range: 
 
         ADDF1-10:     1st to 10th fields to be treated as additive.

@@ -54,7 +54,7 @@ class Modcommand(Runner):
                 filespec['Field Type'].iloc[i] = 'A'
                 filespec['Length'].iloc[i] = 8
 
-            if filespec['Field Name'].iloc[i].strip() in IMPLICIT_FIELDS:
+            elif filespec['Field Name'].iloc[i].strip() in IMPLICIT_FIELDS:
                 filespec['Field Type'].iloc[i] = 'N'
                 filespec['Keep'].iloc[i] = 'N'
                 filespec['Default'].iloc[i] = df[filespec['Field Name'].iloc[i]].iloc[0]
@@ -84,11 +84,11 @@ class Modcommand(Runner):
 
         self.run_command(command)
 
-        def protom(self,
-                out_o,
-                rotmod_p=0,
-                arguments = None
-                ):
+    def protom(self,
+            out_o,
+            rotmod_p=0,
+            arguments = None
+            ):
 
             """
             This is auto-generated documentation. For more command information visit
@@ -114,6 +114,9 @@ class Modcommand(Runner):
             ROTMOD:     Option Description 1 For rotated model.(0).
             required: No; default: 0; range: 0,1
 
+            arguments:  list of arguments, the following 11 are required:
+                
+
             """
 
             # collect local arguments and identify changed keyword-arguments
@@ -130,3 +133,95 @@ class Modcommand(Runner):
             command = 'PROTOM ' + ' '.join(dm_arg_list)
                     
             self.run_command(command)  
+
+    def picrec(self,
+                in_i,
+                out_o,
+                fieldlst_i='optional',
+                fieldnam_f='optional',
+                f1_f='optional',
+                f2_f='optional',
+                f3_f='optional',
+                f4_f='optional',
+                f5_f='optional',
+                append_p=0,
+                test = 'optional'
+                ):
+
+        """
+        This is auto-generated documentation. For more command information visit
+        the Datamine help file.
+        Default values in function definitions were adopted from the documentation
+        files. Keyword argumentsare used only if keyword-value != default value.
+        This avoids issues due to incorrect default valuesin the docs and makes
+        that the true default values are used instead.
+        Author: Mathijs van de Ven
+        Date: 07/02/2023
+
+        -----
+        INPUT
+        -----
+
+        IN:     The name of the file from which records are to be selected.
+        required: Yes; default: ; range: 
+
+        FIELDLST:     Optional file to specify fields to output.
+        required: No; default: ; range: 
+
+        ------
+        OUTPUT
+        ------
+
+        OUT:     The name of the file to which selected records are to be written.
+        required: Yes; default: ; range: 
+
+        ------
+        FIELDS
+        ------
+
+        FIELDNAM:     Field in FIELDLST that holds the names of the data fields to output in
+        OUT.
+        required: No; default: ; range: 
+
+        F1:     The name of the first field to be transferred from the input file to the
+        output file. If no fields are explicitly named, all fields are copied. You
+        may only apply relational and pattern matching tests to fields that are to
+        appear in the output file.
+        required: No; default: ; range: 
+
+        F2:     Second field to be copied.
+        required: No; default: ; range: 
+
+        F3:     Third field to be copied.
+        required: No; default: ; range: 
+
+        F4:     Fourth field to be copied.
+        required: No; default: ; range: 
+
+        F5:     Fifth field to be copied.
+        required: No; default: ; range: 
+
+        ----------
+        PARAMETERS
+        ----------
+
+        APPEND:     If set to 1 then selected records will be appended to the OUT file,
+        provided it exists and has the same fields as the input file (0).
+        required: No; default: 0; range: 0,1
+
+        """
+
+        # collect local arguments and identify changed keyword-arguments
+
+        flocals = locals()
+        fsignature = inspect.signature(self.picrec).parameters.items()
+        
+        # Get python variables as a dictionary of arg:value pairs
+        user_args = utils.getChangedArgs(flocals, fsignature)
+        
+        # Convert python variables to a list of Studio argument:value strings
+        dm_arg_list = utils.getDMArgList(user_args)
+        
+        command = 'PICREC ' + ' '.join(dm_arg_list)
+                
+        self.run_command(command)    

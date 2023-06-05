@@ -2,6 +2,7 @@ import inspect
 import re
 import copy
 import logging
+import numbers
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -62,19 +63,29 @@ def getDMArg(pyvar, argdata):
     Also tries to convert list variables such as f1_to_10_p and creates 
     DM variables for each list entry based on the variable name root.
     """
-    prefix_dict = {'_i':'1_&', '_o':'2_&', '_f':'3_*', '_p':'4_@', 'expression':'5_', 'retrieval':'6_'} # numerals for sorting
-    special_vars = ['expression', 'retrieval']
+    prefix_dict = {'_i':'1_&', '_o':'2_&', '_f':'3_*', '_p':'4_@', 
+                   'expression':'5_', 'retrieval':'6_','arguments':'7_','test':'8_'} # numerals for sorting
+    special_vars = ['expression', 'retrieval', 'arguments','test']
 
     # Special variables, no prefix
     if pyvar in special_vars:
-        if pyvar == 'expression':
+        if pyvar in ['expression','test']:
+            if pyvar == 'expression':
+                close = 'GO'
+            else:
+                close = 'END'
+
             if isinstance(argdata, list):
-                argstr = " '{}' GO".format(' '.join(argdata))
+                argstr = " {} {}".format(' '.join(argdata), close)
             elif isinstance(argdata, str):
-                argstr = " '{}' GO".format(argdata)
+                argstr = " {} {}".format(argdata, close)
                 
         elif pyvar == 'retrieval':
             argstr = "'{{}}'".format(argdata)
+
+        elif pyvar == 'arguments':
+            argstr = ' '.join(["'{}'".format(x) if not isinstance(x, numbers.Number) else str(x) for x in argdata])
+            # argstr = ' '.join([str(x) for x in argdata])
 
         dm_args = "{}{}".format(prefix_dict[pyvar], argstr)
 
