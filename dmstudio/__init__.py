@@ -1,4 +1,5 @@
 from dmstudio.connection.connection import Connection
+from dmstudio.connection.studiocommands._utils import clean_tempfiles
 from dmstudio.filespec import *
 
 import logging

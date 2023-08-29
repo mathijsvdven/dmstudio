@@ -1,9 +1,11 @@
 import inspect
 import re
+import os
+import shutil
 import copy
 import logging
 import numbers
-from pathlib import Path
+from pathlib import Path, WindowsPath
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +56,7 @@ def getChangedArgs(flocals, fsignature):
     key_arg_provided = {k:v for k, v in flocals.items() if k in key_args.keys()}
     key_arg_changed = {k:v for k, v in key_arg_provided.items() if not robustEquals(key_args[k], v)}
     
-    return pos_arg_provided | key_arg_changed
+    return {**pos_arg_provided, **key_arg_changed}
     
 def getDMArg(pyvar, argdata):
     """
@@ -197,4 +199,40 @@ def getDMArgList(arg_value_dict):
     dm_arg_list_clean = [a[2:] for a in dm_arg_list]
     
     return dm_arg_list_clean
+
+def move_to_cwd(filepath, prefix = '_'):
+    """
+    Create a copy of the source file in the working directory.
+    Add a suffix to easily identify temporary files.
+    """
+
+    if not isinstance(filepath, WindowsPath):
+        path = Path(filepath)
+    else:
+        path = filepath
+
+    parent = str(path.parent)
+    file = path.name
+    tempfile = prefix + file
+
+    if parent != '.':
+        cwd = Path().absolute()
+        shutil.copy(path, cwd / tempfile)
+
+    return tempfile
+
+def clean_tempfiles(prefix:str = '_', 
+                    exempt:list=['py']):
+    """
+    Remove temporary files, identified by a prefix (default is '_').
+    Exempts files ending with suffixes in the exempt list (default is 'py')
+
+    """
+    for f in os.listdir():
+        if f.startswith(prefix):
+            checks = [not f.endswith(f".{sfx}") for sfx in exempt]
+            if all(checks):
+                os.remove(f)
+            
+
     

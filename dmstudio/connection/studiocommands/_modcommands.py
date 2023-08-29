@@ -1,6 +1,9 @@
+import os
+import shutil
 import inspect
 import pandas as pd
 import logging
+from pathlib import Path
 
 import dmstudio.connection.studiocommands._utils as utils
 from dmstudio.connection.studiocommands._runner import Runner
@@ -14,7 +17,7 @@ class Modcommand(Runner):
     def __init__(self):
         raise TypeError("This subclass contains functions accessed by the 'Connection' superclass and should not be instantiated separately.")
 
-    def inpfil(self, csv, out_o, filespec=None, na_values = None):
+    def inpfil(self, csv, out_o, filespec=None, na_values = None, clean_tempfiles = True):
         """
         Imports text file to Studio using the INPFIL command. If a Studio file specification
         is not provided as a StudioFileSpec, it is generated on the fly.
@@ -40,6 +43,8 @@ class Modcommand(Runner):
                         'ROTAXIS1','ROTAXIS2','ROTAXIS3']   
 
         arguments = "INPFIL &OUT={} '{}' ".format(out_o, out_o)
+        
+        csv = utils.move_to_cwd(csv)
         df = pd.read_csv(csv, na_values = na_values)
 
         if not isinstance(filespec, StudioFileSpec):
@@ -70,6 +75,9 @@ class Modcommand(Runner):
         arguments += "'!' 'Y' " + "'{}'".format(csv)
 
         self.run_command(arguments)
+
+        if clean_tempfiles:
+            utils.clean_tempfiles()
 
     def xrun(self, macro_i, macro_name_p):
 
